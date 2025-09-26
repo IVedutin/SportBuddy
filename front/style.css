@@ -1,0 +1,204 @@
+:root {
+  --bg1: #F0F9FF;
+  --bg2: #67C2FF;
+  --blue: #2563EB;
+  --green: #10B981;
+  --subtitle: #4C4C4C;
+  --white: #FFFFFF;
+
+  --text-dark: #000000;
+  --text-gray: #595959;
+  --border: #67C2FF;
+  --card-bg: #F0F9FF;
+}
+
+/* Базовые настройки страницы */
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(ellipse at center, var(--bg1) 0%, var(--bg2) 100%);
+  padding: 80px 0;
+}
+
+/* Контейнер */
+.container {
+  text-align: center;
+  max-width: 75rem;
+  padding: 0 1.25rem;
+}
+
+/* Заголовок и подзаголовок */
+.title {
+  font-size: 6rem;
+  font-weight: 900;
+  margin: 0;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--subtitle);
+  margin-top: 1rem;
+}
+
+/* Основная карточка */
+.card {
+  max-width: 50rem;
+  background: var(--white);
+  border-radius: 2.5rem;
+  box-shadow: 0 0.625rem 2.5rem rgba(0,0,0,0.1);
+  margin: 2.5rem auto 8rem;
+  padding: 4rem 2.5rem 4rem;
+}
+
+/* Заголовок и описание карточки */
+.card-title {
+  margin: 0 0 2rem;
+  font-weight: 700;
+  font-size: 3rem;
+  line-height: 1;
+  text-align: center;
+  color: var(--text-dark);
+}
+
+.card-desc {
+  margin: 0 0 2rem;
+  font-weight: 500;
+  font-size: 2rem;
+  line-height: 1.2;
+  color: var(--text-gray);
+  max-width: 44rem;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Блок с логотипом */
+.app-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 2.5rem;
+  width: 100%;
+  max-width: 47rem;
+  padding: 3rem 2.5rem;
+  margin: 2.5rem auto;
+  box-sizing: border-box;
+}
+
+.app-logo {
+  width: 7.375rem;
+  height: auto;
+}
+
+.app-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin-left: 2.2rem;
+}
+
+.app-title {
+  font-size: 3rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.app-subtitle {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-gray);
+  margin: 1.3rem 0 0;
+}
+
+/* Сетка преимуществ */
+.features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem 2.5rem;
+  margin: 3.3rem auto 0;
+  max-width: 47rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.feature-card {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  align-items: center;
+  column-gap: 0.75rem;
+  background: var(--bg1);
+  border: 1px solid rgba(103, 194, 255, 0.4);
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.feature-icon {
+  width: 3.75rem;
+  height: 3.75rem;
+}
+
+.feature-text {
+  text-align: center;
+  font-size: 1.625rem;
+  font-weight: 600;
+  color: var(--text-gray);
+  line-height: 1.3;
+}
+
+/* Кнопка и подпись */
+.cta {
+  margin-top: 3.3rem;
+  text-align: center;
+}
+
+.cta-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 47rem;
+  height: 9.5rem;
+  border-radius: 2.5rem;
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.7), rgba(16, 185, 129, 0.8));
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 3rem;
+  box-shadow: 0 0.25rem 0.25rem rgba(0,0,0,0.25);
+}
+
+.cta-caption {
+  margin: 3rem 0 0;
+  font-weight: 500;
+  font-size: 2rem;
+  line-height: 1.2;
+  color: var(--text-gray);
+  opacity: 0.7;
+  text-align: center;
+}
+
+/* Масштаб всей страницы под 60% */
+body {
+  transform: scale(0.6);          
+  transform-origin: top center;   
+  width: 100vw;                  
+  height: 100vh;                
+  overflow-x: hidden;      
+}
