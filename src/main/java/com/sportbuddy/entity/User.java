@@ -48,6 +48,19 @@ public class User {
     @Column(name = "role")
     private String role = "USER";
 
+    // В класс User добавить:
+    @Column(name = "telegram_username")
+    private String telegramUsername;
+
+    @Column(name = "show_contacts")
+    private Boolean showContacts = true;
+
+    // Геттеры и сеттеры
+    public String getTelegramUsername() { return telegramUsername; }
+    public void setTelegramUsername(String telegramUsername) { this.telegramUsername = telegramUsername; }
+
+    public Boolean getShowContacts() { return showContacts; }
+    public void setShowContacts(Boolean showContacts) { this.showContacts = showContacts; }
     // Добавь геттер и сеттер:
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
