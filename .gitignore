@@ -1,3 +1,33 @@
-/target
-.idea
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# IDE
+.idea/
+*.iws
 *.iml
+*.ipr
+.classpath
+.project
+.settings/
+bin/
+
+# Mac OS
+.DS_Store
+
+Thumbs.db
+
+# Логи
+*.log
+logs/
+*.db
+*.sql
+/h2-data/
+.env
+application-dev.properties
+*.tmp
+*.temp
