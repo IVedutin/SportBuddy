@@ -6,12 +6,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HelloController {
-    @GetMapping("/")
+
+    @GetMapping("/api/hello")
     public String hello() {
         return "Привет! Sportbuddy backend готов!";
     }
-    @GetMapping("/greet")
+
+    @GetMapping("/api/greet")
     public String hiName(@RequestParam(value = "name", defaultValue = "Друг") String name){
-        return "Привет, " + name+"!";
+        return "Привет, " + name + "!";
     }
 }

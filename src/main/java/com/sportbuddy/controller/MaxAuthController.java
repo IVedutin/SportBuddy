@@ -12,17 +12,24 @@ public class MaxAuthController {
 
     @GetMapping("/auth/max")
     public String redirectToMax() {
-        // Кодируем имя и фамилию, чтобы Tomcat не ругался на кириллицу
         String firstName = URLEncoder.encode("Илья", StandardCharsets.UTF_8);
         String lastName = URLEncoder.encode("Ведутин", StandardCharsets.UTF_8);
-
         return "redirect:/auth/max/callback?firstName=" + firstName + "&lastName=" + lastName;
     }
 
     @GetMapping("/auth/max/callback")
     public String maxCallback(String firstName, String lastName, Model model) {
-        // Здесь Spring сам раскодирует обратно в нормальные строки
         model.addAttribute("fullName", firstName + " " + lastName);
-        return "greetings"; // thymeleaf-шаблон
+        return "greetings";
+    }
+
+    @GetMapping("/")
+    public String home() {
+        return "index";
+    }
+
+    @GetMapping("/register")
+    public String register() {
+        return "register";
     }
 }
