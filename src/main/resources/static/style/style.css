@@ -194,11 +194,79 @@ body {
   text-align: center;
 }
 
-/* Масштаб всей страницы под 60% */
-body {
-  transform: scale(0.6);          
-  transform-origin: top center;   
-  width: 100vw;                  
-  height: 100vh;                
-  overflow-x: hidden;      
+
+.participants-list {
+    margin: 20px 0;
+}
+
+.participant-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.participant-info h3 {
+    margin: 0 0 8px 0;
+    color: #2d3436;
+}
+
+.participant-info p {
+    margin: 4px 0;
+    color: #636e72;
+}
+.participants-list {
+    margin: 20px 0;
+}
+
+.participant-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.participant-card:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.participant-info h3 {
+    margin: 0 0 10px 0;
+    color: #2d3436;
+    font-size: 18px;
+}
+
+.participant-info p {
+    margin: 5px 0;
+    color: #636e72;
+    font-size: 14px;
+}
+.booking-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* чуть выше было center */
+    gap: 10px;
+}
+
+.booking-info {
+    flex: 1;
+    min-width: 0; /* чтобы текст не выталкивал кнопки */
+}
+
+.booking-actions {
+    display: flex;
+    flex-direction: column; /* кнопки одна под другой */
+    gap: 8px;
+    flex-shrink: 0;
+    width: 130px; /* фикс: ограничиваем ширину блока кнопок */
 }

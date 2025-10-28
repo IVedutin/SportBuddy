@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Запись на игру - SportBuddy</title>
+    <link rel="stylesheet" href="/style/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h1 class="title">SportBuddy</h1>
+    <p class="subtitle">Запись на игру</p>
+
+    <div class="card">
+        <h2 class="card-title">Выберите игру</h2>
+
+        <!-- Шаг 1: Выбор вида спорта -->
+        <div class="form-group">
+            <label for="sportType">Вид спорта:</label>
+            <select id="sportType" name="sportType" class="form-select">
+                <option value="">-- Выберите вид спорта --</option>
+                <option th:each="sportType : ${sportTypes}"
+                        th:value="${sportType.id}"
+                        th:text="${sportType.name}"></option>
+            </select>
+        </div>
+
+        <!-- Шаг 2: Выбор площадки (появляется после выбора спорта) -->
+        <div id="courtSection" style="display: none;">
+            <div class="form-group">
+                <label for="court">Площадка:</label>
+                <select id="court" name="court" class="form-select">
+                    <option value="">-- Выберите площадку --</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Шаг 3: Выбор времени (появляется после выбора площадки) -->
+        <div id="timeSection" style="display: none;">
+            <div class="form-group">
+                <label>Доступное время:</label>
+                <div id="timeSlots"></div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="/dashboard" class="cta-button">Назад в кабинет</a>
+            <a href="/" class="cta-button">На главную</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Когда выбирают вид спорта
+    document.getElementById('sportType').addEventListener('change', function() {
+        const sportTypeId = this.value;
+        const courtSection = document.getElementById('courtSection');
+        const timeSection = document.getElementById('timeSection');
+
+        if (sportTypeId) {
+            // Загружаем площадки для выбранного вида спорта
+            fetch('/court/courts/' + sportTypeId)
+                .then(response => response.json())
+                .then(courts => {
+                    const courtSelect = document.getElementById('court');
+                    courtSelect.innerHTML = '<option value="">-- Выберите площадку --</option>';
+
+                    courts.forEach(court => {
+                        const option = document.createElement('option');
+                        option.value = court.id;
+                        option.textContent = court.name;
+                        courtSelect.appendChild(option);
+                    });
+
+                    courtSection.style.display = 'block';
+                    timeSection.style.display = 'none';
+                });
+        } else {
+            courtSection.style.display = 'none';
+            timeSection.style.display = 'none';
+        }
+    });
+
+    // Когда выбирают площадку
+    document.getElementById('court').addEventListener('change', function() {
+        const courtId = this.value;
+        const timeSection = document.getElementById('timeSection');
+
+        if (courtId) {
+            // Загружаем временные слоты для выбранной площадки
+            fetch('/court/timeslots/' + courtId)
+                .then(response => response.json())
+                .then(timeSlots => {
+                    const timeSlotsDiv = document.getElementById('timeSlots');
+                    timeSlotsDiv.innerHTML = '<p>Загрузка участников...</p>';
+
+                    // Группируем слоты по дням
+                    const slotsByDay = groupTimeSlotsByDay(timeSlots);
+
+                    // Очищаем и создаем заново
+                    timeSlotsDiv.innerHTML = '';
+
+                    // Создаем блоки для каждого дня
+                    Object.keys(slotsByDay).forEach(day => {
+                        const dayHeader = document.createElement('h3');
+                        dayHeader.textContent = day;
+                        dayHeader.style.marginTop = '20px';
+                        dayHeader.style.color = '#2d3436';
+                        dayHeader.style.borderBottom = '2px solid #00b894';
+                        dayHeader.style.paddingBottom = '5px';
+                        timeSlotsDiv.appendChild(dayHeader);
+
+                        const daySlots = document.createElement('div');
+                        daySlots.className = 'day-slots';
+
+                        // Для каждого слота
+                        slotsByDay[day].forEach(slot => {
+                            // Сразу создаем кнопку
+                            const timeButton = document.createElement('button');
+                            timeButton.type = 'button';
+                            timeButton.className = 'time-slot-button';
+
+                            // Форматируем время ЧЕЛОВЕЧЕСКИ
+                            const startTime = formatTime(slot.startTime);
+                            const endTime = formatTime(slot.endTime);
+
+                            // Временно ставим 0 участников
+                            timeButton.innerHTML = `
+                                <div class="time-range">${startTime} - ${endTime}</div>
+                                <div class="slot-info">Бесплатно • 0/${slot.court.maxPlayers}</div>
+                            `;
+
+                            timeButton.onclick = function() {
+                                bookTimeSlot(slot.id);
+                            };
+                            daySlots.appendChild(timeButton);
+
+                            // Асинхронно загружаем реальное количество участников
+                            fetch('/court/booking-count/' + slot.id)
+                                .then(response => response.json())
+                                .then(count => {
+                                    timeButton.innerHTML = `
+                                        <div class="time-range">${startTime} - ${endTime}</div>
+                                        <div class="slot-info">Бесплатно • ${count}/${slot.court.maxPlayers}</div>
+                                    `;
+                                });
+                        });
+
+                        timeSlotsDiv.appendChild(daySlots);
+                    });
+
+                    timeSection.style.display = 'block';
+                });
+        } else {
+            timeSection.style.display = 'none';
+        }
+    });
+
+    // Группировка слотов по дням
+    function groupTimeSlotsByDay(timeSlots) {
+        const groups = {};
+
+        timeSlots.forEach(slot => {
+            const date = new Date(slot.startTime);
+            const dayKey = date.toLocaleDateString('ru-RU', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long'
+            });
+
+            // Приводим к нормальному регистру (Понедельник вместо понедельник)
+            const formattedDayKey = dayKey.charAt(0).toUpperCase() + dayKey.slice(1);
+
+            if (!groups[formattedDayKey]) {
+                groups[formattedDayKey] = [];
+            }
+            groups[formattedDayKey].push(slot);
+        });
+
+        return groups;
+    }
+
+    // Форматирование времени (исправленная версия)
+    function formatTime(dateTimeString) {
+        const date = new Date(dateTimeString);
+        return date.toLocaleTimeString('ru-RU', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Europe/Moscow'
+        });
+    }
+
+    function bookTimeSlot(timeSlotId) {
+        if (confirm('Записаться на это время?')) {
+            // Отправляем запрос на запись
+            fetch('/court/book', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'timeSlotId=' + timeSlotId
+            })
+            .then(response => {
+                if (response.ok) {
+                    // После успешной записи переходим на страницу участников
+                    window.location.href = '/court/participants/' + timeSlotId;
+                } else {
+                    alert('Ошибка записи');
+                }
+            });
+        }
+    }
+</script>
+
+<style>
+    .day-slots {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+        margin: 15px 0 30px 0;
+    }
+
+    .time-slot-button {
+        background: #00b894;
+        color: white;
+        border: none;
+        padding: 15px 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 14px;
+        text-align: center;
+        transition: all 0.3s ease;
+        min-height: 70px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .time-slot-button:hover {
+        background: #00a085;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+    }
+
+    .time-range {
+        font-weight: 600;
+        font-size: 15px;
+        margin-bottom: 6px;
+    }
+
+    .slot-info {
+        font-size: 12px;
+        opacity: 0.9;
+    }
+
+    .form-select {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+</style>
+</body>
+</html>
