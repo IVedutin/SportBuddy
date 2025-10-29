@@ -61,7 +61,7 @@ body {
   border-radius: 2.5rem;
   box-shadow: 0 0.625rem 2.5rem rgba(0,0,0,0.1);
   margin: 2.5rem auto 8rem;
-  padding: 4rem 2.5rem 4rem;
+  padding: 4rem 2.5rem 2.5rem;
 }
 
 /* Заголовок и описание карточки */
@@ -269,4 +269,95 @@ body {
     gap: 8px;
     flex-shrink: 0;
     width: 130px; /* фикс: ограничиваем ширину блока кнопок */
+}
+
+
+
+/* Стили для формы входа */
+.register-form {
+  margin-top: 3rem;
+}
+
+.form-group {
+  margin-bottom: 2.5rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 1.5rem 2rem;
+  font-size: 1.6rem;
+  border: 2px solid var(--border);
+  border-radius: 1.5rem;
+  background: var(--white);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-actions {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+/* Ссылка "Нет аккаунта" */
+.login-link {
+  margin-top: 2rem;
+  font-size: 1.6rem;
+  color: var(--text-gray);
+}
+
+.login-link a {
+  color: var(--blue);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.login-link a:hover {
+  color: var(--green);
+  text-decoration: underline;
+}
+
+/* Стили для личного кабинета */
+.dashboard-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 40rem;
+    margin: 3rem auto 0;
+}
+
+.dashboard-actions .cta-button {
+    margin: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.dashboard-actions form {
+    margin: 0;
+}
+
+.welcome-message {
+    font-size: 1.6rem;
+    color: var(--text-gray);
+    margin: 2rem 0 3rem;
+    text-align: center;
+}
+
+.card {
+  padding-bottom: 3rem; 
 }
