@@ -140,6 +140,19 @@ public class CourtController {
             return ResponseEntity.badRequest().body("Ошибка: " + e.getMessage());
         }
     }
+    // Отладочный метод - проверка всех слотов
+    @GetMapping("/debug/all-slots")
+    @ResponseBody
+    public List<CourtTimeSlot> getAllSlots() {
+        return courtTimeSlotRepository.findAll();
+    }
+
+    // Отладочный метод - проверка слотов по площадке
+    @GetMapping("/debug/slots/{courtId}")
+    @ResponseBody
+    public List<CourtTimeSlot> getSlotsByCourtDebug(@PathVariable Long courtId) {
+        return courtService.getTimeSlotsByCourt(courtId);
+    }
 
     private String formatTimeSlot(CourtTimeSlot timeSlot) {
         return timeSlot.getStartTime().toLocalTime() + " - " + timeSlot.getEndTime().toLocalTime();

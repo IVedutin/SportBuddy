@@ -1,5 +1,5 @@
-<!doctype html>
-<html lang="ru">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -94,6 +94,7 @@
             fetch('/court/timeslots/' + courtId)
                 .then(response => response.json())
                 .then(timeSlots => {
+                    console.log("Received timeSlots:", timeSlots);
                     const timeSlotsDiv = document.getElementById('timeSlots');
                     timeSlotsDiv.innerHTML = '<p>Загрузка участников...</p>';
 
@@ -185,6 +186,7 @@
 
     // Форматирование времени (исправленная версия)
     function formatTime(dateTimeString) {
+        console.log("Formatting time:", dateTimeString);
         const date = new Date(dateTimeString);
         return date.toLocaleTimeString('ru-RU', {
             hour: '2-digit',
