@@ -1,0 +1,363 @@
+:root {
+  --bg1: #F0F9FF;
+  --bg2: #67C2FF;
+  --blue: #2563EB;
+  --green: #10B981;
+  --subtitle: #4C4C4C;
+  --white: #FFFFFF;
+
+  --text-dark: #000000;
+  --text-gray: #595959;
+  --border: #67C2FF;
+  --card-bg: #F0F9FF;
+}
+
+/* Базовые настройки страницы */
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(ellipse at center, var(--bg1) 0%, var(--bg2) 100%);
+  padding: 80px 0;
+}
+
+/* Контейнер */
+.container {
+  text-align: center;
+  max-width: 75rem;
+  padding: 0 1.25rem;
+}
+
+/* Заголовок и подзаголовок */
+.title {
+  font-size: 6rem;
+  font-weight: 900;
+  margin: 0;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--subtitle);
+  margin-top: 1rem;
+}
+
+/* Основная карточка */
+.card {
+  max-width: 50rem;
+  background: var(--white);
+  border-radius: 2.5rem;
+  box-shadow: 0 0.625rem 2.5rem rgba(0,0,0,0.1);
+  margin: 2.5rem auto 8rem;
+  padding: 4rem 2.5rem 2.5rem;
+}
+
+/* Заголовок и описание карточки */
+.card-title {
+  margin: 0 0 2rem;
+  font-weight: 700;
+  font-size: 3rem;
+  line-height: 1;
+  text-align: center;
+  color: var(--text-dark);
+}
+
+.card-desc {
+  margin: 0 0 2rem;
+  font-weight: 500;
+  font-size: 2rem;
+  line-height: 1.2;
+  color: var(--text-gray);
+  max-width: 44rem;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Блок с логотипом */
+.app-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 2.5rem;
+  width: 100%;
+  max-width: 47rem;
+  padding: 3rem 2.5rem;
+  margin: 2.5rem auto;
+  box-sizing: border-box;
+}
+
+.app-logo {
+  width: 7.375rem;
+  height: auto;
+}
+
+.app-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin-left: 2.2rem;
+}
+
+.app-title {
+  font-size: 3rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.app-subtitle {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-gray);
+  margin: 1.3rem 0 0;
+}
+
+/* Сетка преимуществ */
+.features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem 2.5rem;
+  margin: 3.3rem auto 0;
+  max-width: 47rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.feature-card {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  align-items: center;
+  column-gap: 0.75rem;
+  background: var(--bg1);
+  border: 1px solid rgba(103, 194, 255, 0.4);
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.feature-icon {
+  width: 3.75rem;
+  height: 3.75rem;
+}
+
+.feature-text {
+  text-align: center;
+  font-size: 1.625rem;
+  font-weight: 600;
+  color: var(--text-gray);
+  line-height: 1.3;
+}
+
+/* Кнопка и подпись */
+.cta {
+  margin-top: 3.3rem;
+  text-align: center;
+}
+
+.cta-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 47rem;
+  height: 9.5rem;
+  border-radius: 2.5rem;
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.7), rgba(16, 185, 129, 0.8));
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 3rem;
+  box-shadow: 0 0.25rem 0.25rem rgba(0,0,0,0.25);
+}
+
+.cta-caption {
+  margin: 3rem 0 0;
+  font-weight: 500;
+  font-size: 2rem;
+  line-height: 1.2;
+  color: var(--text-gray);
+  opacity: 0.7;
+  text-align: center;
+}
+
+
+.participants-list {
+    margin: 20px 0;
+}
+
+.participant-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.participant-info h3 {
+    margin: 0 0 8px 0;
+    color: #2d3436;
+}
+
+.participant-info p {
+    margin: 4px 0;
+    color: #636e72;
+}
+.participants-list {
+    margin: 20px 0;
+}
+
+.participant-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.participant-card:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.participant-info h3 {
+    margin: 0 0 10px 0;
+    color: #2d3436;
+    font-size: 18px;
+}
+
+.participant-info p {
+    margin: 5px 0;
+    color: #636e72;
+    font-size: 14px;
+}
+.booking-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* чуть выше было center */
+    gap: 10px;
+}
+
+.booking-info {
+    flex: 1;
+    min-width: 0; /* чтобы текст не выталкивал кнопки */
+}
+
+.booking-actions {
+    display: flex;
+    flex-direction: column; /* кнопки одна под другой */
+    gap: 8px;
+    flex-shrink: 0;
+    width: 130px; /* фикс: ограничиваем ширину блока кнопок */
+}
+
+
+
+/* Стили для формы входа */
+.register-form {
+  margin-top: 3rem;
+}
+
+.form-group {
+  margin-bottom: 2.5rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 1.5rem 2rem;
+  font-size: 1.6rem;
+  border: 2px solid var(--border);
+  border-radius: 1.5rem;
+  background: var(--white);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-actions {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+/* Ссылка "Нет аккаунта" */
+.login-link {
+  margin-top: 2rem;
+  font-size: 1.6rem;
+  color: var(--text-gray);
+}
+
+.login-link a {
+  color: var(--blue);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.login-link a:hover {
+  color: var(--green);
+  text-decoration: underline;
+}
+
+/* Стили для личного кабинета */
+.dashboard-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 40rem;
+    margin: 3rem auto 0;
+}
+
+.dashboard-actions .cta-button {
+    margin: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.dashboard-actions form {
+    margin: 0;
+}
+
+.welcome-message {
+    font-size: 1.6rem;
+    color: var(--text-gray);
+    margin: 2rem 0 3rem;
+    text-align: center;
+}
+
+.card {
+  padding-bottom: 3rem; 
+}
