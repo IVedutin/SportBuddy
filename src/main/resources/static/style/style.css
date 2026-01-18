@@ -64,6 +64,7 @@ body {
   padding: 4rem 2.5rem 2.5rem;
 }
 
+
 /* Заголовок и описание карточки */
 .card-title {
   margin: 0 0 2rem;
@@ -361,3 +362,233 @@ body {
 .card {
   padding-bottom: 3rem; 
 }
+
+
+
+.form-select {
+  width: 100%;
+  height: 68px;     
+  line-height: 72px;      
+  padding: 0 60px 0 18px;
+  border-radius: 18px;
+  border: 2px solid rgba(0,0,0,0.12);
+  background: #fff;
+
+  font-size: 25px;          
+  font-weight: 500;
+  color: #111827;
+
+  box-sizing: border-box;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  box-shadow: 0 12px 28px rgba(0,0,0,0.10);
+
+  /* стрелка-треугольник справа */
+  background-image:
+    linear-gradient(45deg, transparent 50%, #111827 50%),
+    linear-gradient(135deg, #111827 50%, transparent 50%);
+  background-position:
+    calc(100% - 22px) 50%,
+    calc(100% - 16px) 50%;
+  background-size: 10px 10px, 10px 10px;
+  background-repeat: no-repeat;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: rgba(108, 92, 231, 0.6);
+  box-shadow: 0 0 0 6px rgba(108, 92, 231, 0.18), 0 14px 30px rgba(0,0,0,0.12);
+}
+
+.form-select option {
+  font-size: 18px;
+  padding: 10px; 
+}
+
+.form-select option {
+  font-size: 25px;
+}
+
+.day-tabs{
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px 2px 8px;
+  margin-bottom: 14px;
+}
+
+.day-tab{
+  flex: 0 0 auto;
+  border: 2px solid rgba(108,92,231,0.3);
+  background: #fff;
+  border-radius: 999px;
+  padding: 10px 16px;        
+  font-weight: 900;
+  font-size: 22px;            
+  cursor: pointer;
+  box-shadow: 0 12px 26px rgba(0,0,0,0.1);
+  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.day-tab.active{
+  background: rgba(108,92,231,0.18);
+  border-color: rgba(108,92,231,0.7);
+}
+
+
+.time-pill{
+  background: #ffffff;                 
+  color: #111827;
+  border: 2px solid  #6c5ce7;           
+  border-radius: 12px;
+  padding: 16px 18px;
+  cursor: pointer;
+  min-width: 140px;
+  box-shadow: 0 6px 14px rgba(59,130,246,0.2);
+  transition: all .15s ease;
+}
+
+.time-pill:hover{
+  background: #eff6ff;
+  transform: translateY(-2px);
+}
+
+.time-pill .t{
+  font-weight: 900;
+  font-size: 22px;
+}
+
+.time-pill .s{
+  font-size: 20px;
+  margin-top: 6px;
+  opacity: 0.9;
+}
+
+.participants-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 22px 0 32px;
+}
+
+.participant-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.participant-card h3 {
+  margin: 0 0 6px;
+  font-size: 25px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.participant-card p {
+  margin: 0;
+  font-size: 25px;
+  color: #374151;
+}
+
+.participant-card span {
+  font-weight: 600;
+}
+
+/* Карточка одной записи */
+.booking-item{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+
+  background: #fff;
+  border-radius: 26px;              
+  padding: 40px 40px;               
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 16px 36px rgba(0,0,0,0.10);
+  margin-bottom: 22px;
+}
+
+.booking-item__main{
+  flex: 1;
+  min-width: 0;
+}
+
+/* Заголовок игры */
+.booking-item__title{
+  font-weight: 900;
+  font-size: 25px;                 
+  color: #111827;
+  margin-bottom: 16px;
+  line-height: 1.25;
+  text-align: left;
+}
+
+/* Блок с мета-информацией */
+.booking-item__meta{
+  display: grid;
+  gap: 10px;                       
+  font-size: 22px;                  
+  color: #374151;
+}
+
+/* Строка мета */
+.booking-item__row{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Лейблы (Время, Дата…) */
+.booking-item__label{
+  font-weight: 800;
+  opacity: 0.85;
+  font-size: 22px;
+}
+
+/* Кнопки справа */
+.booking-item__actions{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;                       
+  flex: 0 0 auto;
+}
+
+
+
+.mini-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 54px;              
+  min-width: 140px;      
+  padding: 0 22px;
+
+  border-radius: 20px;       
+  font-weight: 900;
+  font-size: 20px;           
+
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+
+  box-shadow: 0 14px 30px rgba(0,0,0,0.12);
+  transition:
+    transform .15s ease,
+    box-shadow .2s ease,
+    opacity .2s ease;
+}
+
+
+
+/* цвета */
+.mini-primary{ background:#6c5ce7; color:#fff; }
+.mini-danger{ background:#dc2626; color:#fff; }
+
+
