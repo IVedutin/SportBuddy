@@ -3,203 +3,94 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мои записи - SportBuddy</title>
+    <title>SportBuddy - Мои записи</title>
     <link rel="stylesheet" href="/style/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap" rel="stylesheet">
-    <style>
-        /* ДОБАВЛЕНО: исправление выравнивания */
-        body {
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-            background-color: #f8f9fa;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .title {
-            text-align: center;
-            color: #2d3436;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #636e72;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border: 1px solid #e9ecef;
-        }
-
-        .card-title {
-            margin-top: 0;
-            color: #2d3436;
-            text-align: center;
-        }
-
-        .bookings-list {
-            margin: 20px 0;
-        }
-
-        .booking-card {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid #e9ecef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .booking-info {
-            flex: 1;
-        }
-
-        .booking-info h3 {
-            margin: 0 0 8px 0;
-            color: #2d3436;
-        }
-
-        .booking-time {
-            font-weight: 600;
-            color: #00b894;
-            margin: 5px 0;
-        }
-
-        .booking-date {
-            color: #636e72;
-            margin: 5px 0;
-        }
-
-        .booking-participants {
-            color: #636e72;
-            margin: 5px 0;
-        }
-
-        .booking-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .form-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 25px;
-        }
-
-        .cta-button {
-            background: #00b894;
-            color: white;
-            border: none;
-            padding: 14px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            text-align: center;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.3s;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .cta-button:hover {
-            background: #00a085;
-        }
-
-        .cta-button.small {
-            padding: 8px 16px;
-            font-size: 14px;
-        }
-
-        .cancel-btn {
-            background: #ff4757 !important;
-        }
-
-        .cancel-btn:hover {
-            background: #ff3742 !important;
-        }
-
-        .no-bookings {
-            text-align: center;
-            color: #636e72;
-            font-style: italic;
-            margin: 30px 0;
-        }
-    </style>
 </head>
+
 <body>
 <div class="container">
     <h1 class="title">SportBuddy</h1>
-    <p class="subtitle">Мои записи</p>
+    <p class="subtitle">Найди команду для игры быстро и удобно!</p>
 
     <div class="card">
         <h2 class="card-title">Предстоящие игры</h2>
 
-        <!-- ИСПРАВЛЕНО: правильный синтаксис Thymeleaf -->
+        <!-- Нет записей -->
         <div th:if="${bookings.empty}">
-            <p class="no-bookings">У вас пока нет записей на игры</p>
+            <p class="welcome-message">У вас пока нет записей на игры</p>
         </div>
 
-        <div th:unless="${bookings.empty}" class="bookings-list">
-            <div th:each="booking : ${bookings}" class="booking-card">
-                <div class="booking-info">
-                    <!-- ИСПРАВЛЕНО: правильные названия полей из BookingDto -->
-                    <h3 th:text="${booking.sportType} + ' - ' + ${booking.courtName}">Название спорта - Название корта</h3>
-                    <p class="booking-time" th:text="${booking.timeSlot}">Время</p>
-                    <p class="booking-date" th:text="${booking.date}">Дата</p>
-                    <p class="booking-participants" th:text="'Участников: ' + ${booking.participantCount}">Участников: 0</p>
-                </div>
-                <div class="booking-actions">
-                    <!-- ИСПРАВЛЕНО: правильное название поля -->
-                    <a th:href="@{/court/participants/{id}(id=${booking.timeSlotId})}"
-                       class="cta-button small">Участники</a>
-                    <button class="cta-button small cancel-btn"
-                            th:onclick="'cancelBooking(' + ${booking.id} + ')'">Отменить</button>
+        <!-- Есть записи -->
+        <div th:unless="${bookings.empty}">
+            <div class="bookings-list">
+                <div th:each="booking : ${bookings}" class="booking-item">
+                    <div class="booking-item__main">
+                        <div class="booking-item__title"
+                             th:text="${booking.sportType} + ' - ' + ${booking.courtName}">
+                            Название спорта - Название корта
+                        </div>
+
+                        <div class="booking-item__meta">
+                            <div class="booking-item__row">
+                                <span class="booking-item__label">Время:</span>
+                                <span th:text="${booking.timeSlot}">Время</span>
+                            </div>
+                            <div class="booking-item__row">
+                                <span class="booking-item__label">Дата:</span>
+                                <span th:text="${booking.date}">Дата</span>
+                            </div>
+                            <div class="booking-item__row">
+                                <span class="booking-item__label">Участников:</span>
+                                <span th:text="${booking.participantCount}">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="booking-item__actions">
+                        <a th:href="@{/court/participants/{id}(id=${booking.timeSlotId})}"
+                        class="mini-btn mini-primary">
+                            Участники
+                        </a>
+
+                        <button type="button"
+                                class="mini-btn mini-danger"
+                                th:attr="data-booking-id=${booking.id}"
+                                onclick="cancelBooking(this)">
+                            Отменить
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="form-actions">
+        <!-- Кнопки -->
+        <div class="dashboard-actions">
             <a href="/court/booking" class="cta-button">Записаться на игру</a>
-            <a href="/dashboard" class="cta-button">В кабинет</a>
-            <a href="/" class="cta-button">На главную</a>
+            <a href="/dashboard" class="cta-button" style="background: #6c5ce7;">В кабинет</a>
         </div>
     </div>
 </div>
 
 <script>
-    function cancelBooking(bookingId) {
+    function cancelBooking(btn) {
+        const bookingId = btn.getAttribute('data-booking-id');
+        if (!bookingId) {
+            alert('Не удалось определить bookingId');
+            return;
+        }
+
         if (confirm('Отменить запись?')) {
             fetch('/court/cancel-booking', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'bookingId=' + bookingId
-            })
-            .then(response => {
-                if (response.ok) {
-                    location.reload();
-                } else {
-                    alert('Ошибка отмены записи');
-                }
-            });
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'bookingId=' + encodeURIComponent(bookingId)
+            }).then(response => {
+                if (response.ok) location.reload();
+                else alert('Ошибка отмены записи');
+            }).catch(() => alert('Ошибка сети'));
         }
     }
 </script>
