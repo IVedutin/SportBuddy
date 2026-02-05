@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SportBuddy — сайт для поиска игроков и игр</title>
+    <link rel="stylesheet" href="../static/fonts/fonts.css" />
+    <link rel="stylesheet" href="../static/style/global.css" />
+    <link rel="stylesheet" href="../static/style/new_styles.css" />
+  </head>
+  <body>
+    <header class="header">
+      <a class="header_logo" href="./home.html">
+        <img
+          class="header_logo-image"
+          src="../static/images/logo.svg"
+          alt="Логотип сайта"
+        />
+      </a>
+      <nav class="header_menu">
+        <ul class="header_links-list">
+          <li class="header_links-list-item">
+            <a class="header_link header_link_active" href="./home.html"
+              >главная</a
+            >
+          </li>
+          <li class="header_links-list-item">
+            <a class="header_link" href="#about">о нас</a>
+          </li>
+          <li class="header_links-list-item">
+            <a class="header_link" href="#contacts">контакты</a>
+          </li>
+        </ul>
+      </nav>
+      <button class="header_button">Войти</button>
+    </header>
+    <main>
+      <section class="cover">
+        <div class="overlay"></div>
+        <div class="cover_content">
+          <h1 class="cover_title">
+            <span class="accent">Найди команду</span><br />
+            для тренировок<br />
+            и матчей <span class="accent">уже сегодня</span>
+          </h1>
+          <p class="cover_subtitle">Больше не ищи команду в чатах</p>
+          <ul class="cover_list">
+            <li>выбирай площадку и время</li>
+            <li>смотри, кто уже записан</li>
+            <li>присоединяйся в один клик</li>
+          </ul>
+          <div class="cover_actions">
+            <button class="cover_button cover_button_find">Найти игру</button>
+            <button class="cover_button cover_button_about">Подробнее</button>
+          </div>
+        </div>
+        <div class="cover_illustration">
+          <img
+            class="cover_mascot"
+            src="../static/images/mascot.png"
+            alt="Маскот SportBuddy"
+          />
+        </div>
+      </section>
+      <section class="sports">
+        <h2 class="sports-title">Выбери свой вид спорта</h2>
+        <div class="sports-marquee" id="sportsMarquee">
+          <div class="sports-track" id="sportsTrack">
+            <article class="sport-card">
+              <img
+                class="sport-img"
+                src="../static/images/basketball.png"
+                alt="Баскетбол"
+              />
+              <span>Баскетбол</span>
+            </article>
+            <article class="sport-card">
+              <img class="sport-img" src="../static/images/football.png" alt="Футбол" />
+              <span>Футбол</span>
+            </article>
+            <article class="sport-card">
+              <img class="sport-img" src="../static/images/tennis.png" alt="Теннис" />
+              <span>Теннис</span>
+            </article>
+            <article class="sport-card">
+              <img
+                class="sport-img"
+                src="../static/images/table_tennis.png"
+                alt="Настольный теннис"
+              />
+              <span>Настольный теннис</span>
+            </article>
+            <article class="sport-card sport-card_placeholder">
+              <span>Скоро</span>
+            </article>
+            <article class="sport-card sport-card_placeholder">
+              <span>Скоро</span>
+            </article>
+            <article class="sport-card sport-card_placeholder">
+              <span>Скоро</span>
+            </article>
+            <article class="sport-card sport-card_placeholder">
+              <span>Скоро</span>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section class="advantages">
+        <h2 class="advantages-title">Почему спортсмены выбирают нас?</h2>
+        <div class="advantages-grid">
+          <div class="adv-card">
+            <h3 class="advantages-subtitle">Быстрый поиск игр</h3>
+            <p class="sports-description">
+              Все игры и тренировки собраны в одном месте — без чатов, ожиданий
+              и лишних сообщений.
+            </p>
+          </div>
+          <div class="adv-card">
+            <h3 class="advantages-subtitle">Подходящие игроки</h3>
+            <p class="sports-description">
+              Умный подбор по виду спорта, уровню игры и удобному времени для
+              каждого участника.
+            </p>
+          </div>
+          <div class="adv-card">
+            <h3 class="advantages-subtitle">Экономия времени</h3>
+            <p class="sports-description">
+              Запись и присоединение к игре занимают всего пару кликов — никаких
+              лишних шагов.
+            </p>
+          </div>
+          <div class="adv-card">
+            <h3 class="advantages-subtitle">Игры рядом с тобой</h3>
+            <p class="sports-description">
+              Находи ближайшие площадки и игры поблизости с помощью удобной
+              карты.
+            </p>
+          </div>
+          <div class="adv-card">
+            <h3 class="advantages-subtitle">Актуальные уведомления</h3>
+            <p class="sports-description">
+              Мгновенно узнавай о новых играх рядом и изменениях в расписании.
+            </p>
+          </div>
+          <div class="adv-card">
+            <h3 class="advantages-subtitle">Спортивное сообщество</h3>
+            <p class="sports-description">
+              Находи партнёров, собирай команды и играй регулярно в своём
+              спортивном кругу.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section class="safety">
+        <h2 class="safety-title">Мы заботимся о твоей безопасности</h2>
+        <div class="safety-content">
+          <p class="safety-text">
+            Ты можешь войти в профиль через мессенджер MAX. Это помогает
+            защитить аккаунт и подтверждает, что за профилем стоит реальный
+            пользователь.<br />
+            Он также используется для общения с игроками в чатах после записи на
+            игру.
+          </p>
+          <img
+            class="safety-text-icon"
+            src="../static/images/messenger-max.png"
+            alt="Мессенджер MAX"
+          />
+        </div>
+        <div class="safety-action">
+          <button class="safety_button">Войти через MAX</button>
+        </div>
+      </section>
+    </main>
+    <footer class="footer">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <img src="../static/images/logo.svg" alt="SportBuddy" class="footer-logo" />
+          <p class="footer-desc">
+            Находи игры и игроков рядом. Быстро, удобно и без лишних чатов.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Разделы</h3>
+          <a href="#about" class="footer-link">О нас</a>
+          <a href="#contacts" class="footer-link">Контакты</a>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Контакты</h3>
+          <div class="footer-meta">E-mail</div>
+          <a href="mailto:info@sportbuddy.ru" class="footer-link"
+            >info@sportbuddy.ru</a
+          >
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2026 SportBuddy</div>
+        <div class="footer-legal">
+          <a href="#" class="footer-legal-link">Политика конфиденциальности</a>
+          <span class="footer-dot">•</span>
+          <a href="#" class="footer-legal-link">Пользовательское соглашение</a>
+        </div>
+      </div>
+    </footer>
+    <script src="../static/js/marquee.js"></script>
+  </body>
+</html>
