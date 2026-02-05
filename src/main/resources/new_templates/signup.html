@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Регистрация — SportBuddy</title>
+    <link rel="stylesheet" href="../static/fonts/fonts.css" />
+    <link rel="stylesheet" href="../static/style/global.css" />
+    <link rel="stylesheet" href="../static/style/styles_auth.css" />
+  </head>
+  <body>
+    <main>
+      <section class="auth">
+        <div class="auth_logo">
+          <a class="auth_logo-link" href="./home.html">
+            <img
+              class="auth_logo-image"
+              src="../static/images/logo.svg"
+              alt="Логотип SportBuddy"
+            />
+          </a>
+        </div>
+        <div class="auth_container auth_container-signup">
+          <h1 class="auth_title">Регистрация</h1>
+          <p class="auth_subtitle">Создай аккаунт и находи игроков рядом</p>
+          <form class="auth_form auth_form-signup" action="#" method="post">
+            <label class="auth_label">
+              <span class="auth_label-text">
+                Имя <span class="auth_required">*</span>
+              </span>
+              <input
+                class="auth_input"
+                type="text"
+                name="first_name"
+                placeholder="Иван"
+                required
+              />
+            </label>
+            <label class="auth_label">
+              <span class="auth_label-text">
+                Фамилия <span class="auth_required">*</span>
+              </span>
+              <input
+                class="auth_input"
+                type="text"
+                name="last_name"
+                placeholder="Иванов"
+                required
+              />
+            </label>
+            <label class="auth_label">
+              <span class="auth_label-text">
+                Email <span class="auth_required">*</span>
+              </span>
+              <input
+                class="auth_input"
+                type="email"
+                name="email"
+                placeholder="name@example.com"
+                autocomplete="email"
+                required
+              />
+            </label>
+            <label class="auth_label">
+              <span class="auth_label-text">
+                Телефон <span class="auth_required">*</span>
+              </span>
+              <input
+                class="auth_input"
+                type="tel"
+                name="phone"
+                placeholder="+7 900 000-00-00"
+                autocomplete="tel"
+                required
+              />
+            </label>
+            <label class="auth_label">
+              <span class="auth_label-text">
+                Пароль <span class="auth_required">*</span>
+              </span>
+              <input
+                class="auth_input"
+                type="password"
+                name="password"
+                placeholder="Придумайте пароль"
+                autocomplete="new-password"
+                required
+              />
+            </label>
+            <label class="auth_label">
+              <span class="auth_label-text">
+                Подтверждение пароля <span class="auth_required">*</span>
+              </span>
+              <input
+                class="auth_input"
+                type="password"
+                name="password_confirm"
+                placeholder="Повторите пароль"
+                autocomplete="new-password"
+                required
+              />
+            </label>
+            <button class="auth_button" type="submit">Создать аккаунт</button>
+          </form>
+          <p class="auth_footer">
+            Уже есть аккаунт?
+            <a class="auth_link" href="./auth.html">Войти</a>
+          </p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
