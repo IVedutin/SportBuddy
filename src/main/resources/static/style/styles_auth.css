@@ -10,8 +10,9 @@ body {
   justify-content: center;
   align-items: center;
   gap: 20px;
+  box-sizing: border-box;
   min-height: 100vh;
-  padding-top: 40px;
+  padding: 40px 16px;
 }
 
 .auth_logo-image {
@@ -182,4 +183,39 @@ body {
 
 .auth_link:hover {
   text-decoration: underline;
+}
+
+.auth_label-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.auth_required {
+  color: #ef4444;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.auth_container-signup {
+  max-width: 620px;
+}
+
+.auth_form-signup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.auth_form-signup .auth_button {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 560px) {
+  .auth_form-signup {
+    grid-template-columns: 1fr;
+  }
+
+  .auth_form-signup .auth_button {
+    grid-column: auto;
+  }
 }
