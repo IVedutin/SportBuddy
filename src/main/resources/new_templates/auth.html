@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Вход — SportBuddy</title>
+    <link rel="stylesheet" href="../static/fonts/fonts.css" />
+    <link rel="stylesheet" href="../static/style/global.css" />
+    <link rel="stylesheet" href="../static/style/styles_auth.css" />
+  </head>
+  <body>
+    <main>
+      <section class="auth">
+        <div class="auth_logo">
+          <a class="auth_logo-link" href="./home.html">
+            <img
+              class="auth_logo-image"
+              src="../static/images/logo.svg"
+              alt="Логотип SportBuddy"
+            />
+          </a>
+        </div>
+        <div class="auth_container">
+          <h1 class="auth_title">Вход</h1>
+          <p class="auth_subtitle">Найди игроков и игры рядом с тобой</p>
+          <form class="auth_form" action="#" method="post">
+            <label class="auth_label">
+              Email
+              <input
+                class="auth_input"
+                type="email"
+                name="email"
+                placeholder="name@example.com"
+                autocomplete="email"
+                required
+              />
+            </label>
+            <label class="auth_label">
+              Пароль
+              <input
+                class="auth_input"
+                type="password"
+                name="password"
+                placeholder="Введите пароль"
+                autocomplete="current-password"
+                required
+              />
+            </label>
+            <button class="auth_button" type="submit">Войти</button>
+          </form>
+          <div class="auth_divider">
+            <span class="auth_divider-text">или</span>
+          </div>
+          <div class="auth_social">
+            <button class="auth_social-button" type="button">
+              <img
+                class="auth_social-icon"
+                src="../static/images/messenger-max.png"
+                alt="Мессенджер MAX"
+              />
+              Войти через MAX
+            </button>
+          </div>
+          <p class="auth_footer">
+            Нет аккаунта?
+            <a class="auth_link" href="#">Зарегистрироваться</a>
+          </p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
