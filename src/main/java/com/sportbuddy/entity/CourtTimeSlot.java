@@ -22,6 +22,16 @@ public class CourtTimeSlot {
 
     private Integer price;
 
+    @Column(name = "chat_url")
+    private String chatUrl;
+
+    @Column(name = "chat_creation_lock_time")
+    private LocalDateTime chatCreationLockTime;
+
+    @ManyToOne
+    @JoinColumn(name = "chat_creator_id")
+    private User chatCreator;
+
     // Конструкторы
     public CourtTimeSlot() {}
 
@@ -47,4 +57,12 @@ public class CourtTimeSlot {
 
     public Integer getPrice() { return price; }
     public void setPrice(Integer price) { this.price = price; }
+    public String getChatUrl() { return chatUrl; }
+    public void setChatUrl(String chatUrl) { this.chatUrl = chatUrl; }
+
+    public LocalDateTime getChatCreationLockTime() { return chatCreationLockTime; }
+    public void setChatCreationLockTime(LocalDateTime chatCreationLockTime) { this.chatCreationLockTime = chatCreationLockTime; }
+
+    public User getChatCreator() { return chatCreator; }
+    public void setChatCreator(User chatCreator) { this.chatCreator = chatCreator; }
 }

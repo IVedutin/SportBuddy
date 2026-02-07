@@ -15,18 +15,27 @@ public class Booking {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "court_time_id", nullable = false)
+    @JoinColumn(name = "court_time_slot_id", nullable = false) // <--- Исправлено имя
     private CourtTimeSlot courtTimeSlot;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "booking_time", nullable = false)
+    private LocalDateTime bookingTime;
+
     // Конструкторы
     public Booking() {}
+
 
     public Booking(User user, CourtTimeSlot courtTimeSlot) {
         this.user = user;
         this.courtTimeSlot = courtTimeSlot;
+        // Можно сразу установить время бронирования здесь,
+        // если оно совпадает со временем начала слота
+        if (courtTimeSlot != null) {
+            this.bookingTime = courtTimeSlot.getStartTime();
+        }
     }
 
     @PrePersist
@@ -46,4 +55,7 @@ public class Booking {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getBookingTime() { return bookingTime; }
+    public void setBookingTime(LocalDateTime bookingTime) { this.bookingTime = bookingTime; }
 }
