@@ -22,7 +22,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
                 .password(user.getPassword())
-                .roles(user.getRole())
+                // --- ИЗМЕНЕНИЕ ---
+                .roles(user.getRole().name()) // .name() превращает enum в строку ("USER", "PREMIUM")
                 .build();
     }
 }

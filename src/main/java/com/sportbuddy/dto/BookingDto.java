@@ -10,9 +10,10 @@ public class BookingDto {
     private String timeSlot;
     private String date;
     private Integer participantCount;
+    private Long courtId;
 
     public BookingDto(Long id, Long timeSlotId, String sportType, String courtName,
-                      String timeSlot, String date, Integer participantCount) {
+                      String timeSlot, String date, Integer participantCount,Long courtId) {
         this.id = id;
         this.timeSlotId = timeSlotId;
         this.sportType = sportType;
@@ -20,6 +21,7 @@ public class BookingDto {
         this.timeSlot = timeSlot;
         this.date = date;
         this.participantCount = participantCount;
+        this.courtId = courtId;
     }
 
     // Геттеры
@@ -30,4 +32,5 @@ public class BookingDto {
     public String getTimeSlot() { return timeSlot; }
     public String getDate() { return date; }
     public Integer getParticipantCount() { return participantCount; }
+    public Long getCourtId(){return courtId;}
 }

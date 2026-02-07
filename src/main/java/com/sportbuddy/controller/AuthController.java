@@ -1,54 +1,70 @@
 package com.sportbuddy.controller;
 
-import com.sportbuddy.dto.RegisterRequest;
-import com.sportbuddy.dto.ApiResponse;
-import com.sportbuddy.service.AuthService;
-import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.sportbuddy.entity.User;
+import com.sportbuddy.repository.UserRepository;
+import com.sportbuddy.service.SmsService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.Collections;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class AuthController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    @Autowired
+    private SmsService smsService;
 
     @Autowired
-    private AuthService authService;
+    private UserRepository userRepository;
 
-    @PostMapping("/register")
-    public ResponseEntity<ApiResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
-        logger.info("=== НАЧАЛО РЕГИСТРАЦИИ ===");
-        logger.info("Получен запрос на регистрацию: {}", registerRequest.getEmail());
+    @PostMapping("/send-code")
+    public ResponseEntity<String> sendCode(@RequestParam String phone) {
+        String cleanPhone = phone.replaceAll("[^0-9]", "");
 
-        try {
-            if (authService == null) {
-                logger.error("AuthService is NULL!");
-                return ResponseEntity.badRequest()
-                        .body(ApiResponse.error("Сервис недоступен"));
-            }
+        // Проверяем, есть ли такой юзер
+        if (!userRepository.existsByPhone(cleanPhone)) {
+            return ResponseEntity.badRequest().body("Этот номер не зарегистрирован!");
+        }
 
-            Optional<String> error = authService.register(registerRequest);
+        smsService.sendSms(cleanPhone);
+        return ResponseEntity.ok("Код отправлен");
+    }
 
-            if (error.isPresent()) {
-                logger.error("Ошибка регистрации: {}", error.get());
-                return ResponseEntity.badRequest()
-                        .body(ApiResponse.error(error.get()));
-            }
+    @PostMapping("/login-phone")
+    public ResponseEntity<String> loginByPhone(@RequestParam String phone,
+                                               @RequestParam String code,
+                                               HttpServletRequest request) {
+        String cleanPhone = phone.replaceAll("[^0-9]", "");
 
-            logger.info("Регистрация успешна для: {}", registerRequest.getEmail());
-            return ResponseEntity.ok()
-                    .body(ApiResponse.success("Регистрация успешно завершена"));
+        if (smsService.verifyCode(cleanPhone, code)) {
+            User user = userRepository.findByPhone(cleanPhone).orElseThrow();
 
-        } catch (Exception e) {
-            logger.error("Исключение при регистрации: ", e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Внутренняя ошибка сервера: " + e.getMessage()));
+            // ВХОД В СИСТЕМУ БЕЗ ПАРОЛЯ
+            String role = user.getRoleName().startsWith("ROLE_") ? user.getRoleName() : "ROLE_" + user.getRole();
+
+            Authentication auth = new UsernamePasswordAuthenticationToken(
+                    user.getEmail(), null, Collections.singletonList(new SimpleGrantedAuthority(role))
+            );
+
+            SecurityContext sc = SecurityContextHolder.getContext();
+            sc.setAuthentication(auth);
+
+            HttpSession session = request.getSession(true);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
+
+            return ResponseEntity.ok("Успешно");
+        } else {
+            return ResponseEntity.badRequest().body("Неверный код");
         }
     }
 }

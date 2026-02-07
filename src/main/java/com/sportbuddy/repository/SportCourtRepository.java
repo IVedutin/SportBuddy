@@ -7,5 +7,6 @@ import java.util.List;
 
 @Repository
 public interface SportCourtRepository extends JpaRepository<SportCourt, Long> {
-    List<SportCourt> findBySportTypeId(Long sportTypeId);
+    List<SportCourt> findBySportTypeIdAndStatus(Long sportTypeId, String status);
+    List<SportCourt> findByStatus(String status);
 }

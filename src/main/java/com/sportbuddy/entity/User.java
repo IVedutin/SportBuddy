@@ -5,7 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
-
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 @Entity
 @Table(name = "users")
 public class User {
@@ -18,6 +19,10 @@ public class User {
     @Size(min = 2, max = 50, message = "Имя должно быть от 2 до 50 символов")
     @Column(name = "first_name", nullable = false)
     private String firstName;
+
+
+    @Column(columnDefinition = "integer default 1000")
+    private int rating = 1000; // По умолчанию у всех рейтинг 1000
 
     @NotBlank(message = "Фамилия обязательна")
     @Size(min = 2, max = 50, message = "Фамилия должна быть от 2 до 50 символов")
@@ -45,8 +50,9 @@ public class User {
     private LocalDateTime updatedAt;
 
     // Добавь это поле в класс User (после поля password):
+    @Enumerated(EnumType.STRING) // Хранить в БД как строку ("USER", "PREMIUM")
     @Column(name = "role")
-    private String role = "USER";
+    private Role role; // Теперь тип - наш enum Role
 
     // В класс User добавить:
     @Column(name = "telegram_username")
@@ -56,14 +62,18 @@ public class User {
     private Boolean showContacts = true;
 
     // Геттеры и сеттеры
+    public int getRating() { return rating; }
+    public void setRating(int rating) { this.rating = rating; }
+
     public String getTelegramUsername() { return telegramUsername; }
     public void setTelegramUsername(String telegramUsername) { this.telegramUsername = telegramUsername; }
 
     public Boolean getShowContacts() { return showContacts; }
     public void setShowContacts(Boolean showContacts) { this.showContacts = showContacts; }
     // Добавь геттер и сеттер:
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    public Role getRole() { return role; }
+    public String getRoleName() {return  role.name();}
+    public void setRole(Role role) { this.role = role; }
     // Конструкторы
     public User() {}
 
@@ -105,6 +115,9 @@ public class User {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (role == null) {
+            role = Role.USER;
+        }
     }
 
     @PreUpdate
