@@ -1,0 +1,162 @@
+<!doctype html>
+<html
+  lang="ru"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Личный кабинет — SportBuddy</title>
+    <link rel="stylesheet" href="../static/fonts/fonts.css" />
+    <link rel="stylesheet" href="../static/style/global.css" />
+    <link rel="stylesheet" href="../static/style/styles_dashboard.css" />
+  </head>
+  <body>
+    <main class="dash">
+      <section class="dash_hero">
+        <div class="dash_bar">
+          <div class="dash_brand">
+            <img
+              class="dash_logo"
+              src="../static/images/logo.svg"
+              alt="SportBuddy"
+            />
+          </div>
+        </div>
+        <div class="dash_hero-grid">
+          <div class="dash_hero-text">
+            <h1 class="dash_title">Личный кабинет</h1>
+            <div class="dash_hero-middle">
+              <p class="dash_subtitle">
+                Привет,
+                <span
+                  class="dash_user"
+                  th:text="${#authentication?.name} ?: 'игрок'"
+                  >игрок</span
+                >
+                <img
+                  class="wave_icon"
+                  src="../static/images/hello.png"
+                  alt="Приветствие"
+                />
+                <br />
+                <span>Выбирай игру — и выходи на площадку!</span>
+              </p>
+              <div class="dash_badges">
+                <span class="dash_badge" sec:authorize="hasRole('USER')"
+                  >Игрок</span
+                >
+                <span
+                  class="dash_badge dash_badge-premium"
+                  sec:authorize="hasRole('PREMIUM')"
+                >
+                  <img
+                    class="badge_icon"
+                    src="../static/images/diamond.png"
+                    alt="Premium"
+                  />
+                  Premium
+                </span>
+                <span
+                  class="dash_badge dash_badge-admin"
+                  sec:authorize="hasRole('ADMIN')"
+                  >Admin</span
+                >
+              </div>
+            </div>
+            <form method="post" action="/logout" class="dash_logout">
+              <button class="dash_logout-btn" type="submit">Выйти</button>
+            </form>
+          </div>
+          <div class="dash_hero-card">
+            <div class="stat">
+              <div class="stat_label">Предстоящие игры</div>
+              <div class="stat_value" th:text="${upcomingCount} ?: 0">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat_label">Сыграно матчей</div>
+              <div class="stat_value" th:text="${playedCount} ?: 0">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat_label">Рейтинг</div>
+              <div class="stat_value" th:text="${rating} ?: '—'">—</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="dash_grid">
+        <a href="/court/booking" class="tile tile-primary">
+          <div class="tile_icon">
+            <img src="../static/images/stadium.png" alt="Записаться на игру" />
+          </div>
+          <div class="tile_text">
+            <div class="tile_title">Записаться на игру</div>
+            <div class="tile_sub">выбери площадку и время</div>
+          </div>
+          <div class="tile_arrow">→</div>
+        </a>
+        <a href="/court/my-bookings" class="tile tile-teal">
+          <div class="tile_icon">
+            <img src="../static/images/pin.png" alt="Мои записи" />
+          </div>
+          <div class="tile_text">
+            <div class="tile_title">Мои записи</div>
+            <div class="tile_sub">будущие встречи</div>
+          </div>
+          <div class="tile_arrow">→</div>
+        </a>
+        <a href="/court/booking-history" class="tile tile-blue">
+          <div class="tile_icon">
+            <img src="../static/images/clock.png" alt="История игр" />
+          </div>
+          <div class="tile_text">
+            <div class="tile_title">История игр</div>
+            <div class="tile_sub">прошедшие встречи</div>
+          </div>
+          <div class="tile_arrow">→</div>
+        </a>
+        <a href="/court/ranked-matches" class="tile tile-gold">
+          <div class="tile_icon">
+            <img src="../static/images/cup.png" alt="Рейтинговые матчи" />
+          </div>
+          <div class="tile_text">
+            <div class="tile_title">Рейтинговые матчи</div>
+            <div class="tile_sub">играй на рейтинг</div>
+          </div>
+          <div class="tile_arrow">→</div>
+        </a>
+        <a href="/court/add-new" class="tile tile-outline">
+          <div class="tile_icon">
+            <img src="../static/images/plus.png" alt="Добавить площадку" />
+          </div>
+          <div class="tile_text">
+            <div class="tile_title">Добавить площадку</div>
+            <div class="tile_sub">для организаторов</div>
+          </div>
+          <div class="tile_arrow">→</div>
+        </a>
+        <div
+          class="tile tile-promo"
+          sec:authorize="hasRole('USER') and !hasRole('PREMIUM')"
+        >
+          <div class="promo">
+            <div class="promo_title">
+              <img
+                class="promo_icon"
+                src="../static/images/diamond.png"
+                alt="Премиум-статус"
+              />
+              SportBuddy Premium
+            </div>
+            <div class="promo_text">
+              приоритет в записях, больше возможностей и фишек
+            </div>
+            <a href="/subscription" class="promo_btn">Стать Premium</a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
