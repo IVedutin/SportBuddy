@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Рейтинговые матчи — SportBuddy</title>
+    <link rel="stylesheet" href="../static/fonts/fonts.css" />
+    <link rel="stylesheet" href="../static/style/global.css" />
+    <link rel="stylesheet" href="../static/style/styles_matches.css" />
+  </head>
+  <body>
+    <main class="ranked">
+      <section class="ranked_hero">
+        <div class="ranked_header">
+          <div class="ranked_brand">
+            <img
+              class="ranked_logo"
+              src="../static/images/logo.svg"
+              alt="SportBuddy"
+            />
+          </div>
+        </div>
+        <div class="ranked_hero-grid">
+          <div class="ranked_hero-text">
+            <h1 class="ranked_title">Рейтинговые матчи</h1>
+            <div class="ranked_hero-middle">
+              <p class="ranked_subtitle">
+                Участвуй в матчах, зарабатывай рейтинг и отслеживай прогресс
+              </p>
+              <div class="ranked_filters ranked_filters-dash">
+                <div class="ranked_search">
+                  <input
+                    id="q"
+                    class="ranked_input"
+                    type="text"
+                    placeholder="Поиск по названию/локации..."
+                  />
+                </div>
+                <select id="sport" class="ranked_select">
+                  <option value="all">Все виды спорта</option>
+                  <option value="football">Футбол</option>
+                  <option value="basketball">Баскетбол</option>
+                  <option value="tennis">Теннис</option>
+                  <option value="volleyball">Волейбол</option>
+                </select>
+                <button id="refresh" class="ranked_btn" type="button">
+                  Обновить
+                </button>
+              </div>
+            </div>
+            <a
+              href="/dashboard"
+              class="ranked_btn ranked_btn-ghost ranked_cabinet-btn"
+              >В кабинет</a
+            >
+          </div>
+          <div class="ranked_hero-card">
+            <div class="ranked_stat">
+              <div class="ranked_stat-label">Доступно матчей</div>
+              <div id="matchesCount" class="ranked_stat-value">—</div>
+            </div>
+            <div class="ranked_stat">
+              <div class="ranked_stat-label">Ближайший старт</div>
+              <div id="nearestTime" class="ranked_stat-value">—</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="ranked_list">
+        <div id="matches-list" class="ranked_grid"></div>
+        <div id="empty" class="ranked_empty" style="display: none">
+          <div class="ranked_empty-title">Пока нет доступных матчей</div>
+          <div class="ranked_empty-text">
+            Попробуй обновить список или зайди позже
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="../static/js/ranked-matches.js"></script>
+  </body>
+</html>
