@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Подписка Premium — SportBuddy</title>
+    <link rel="stylesheet" href="../static/fonts/fonts.css" />
+    <link rel="stylesheet" href="../static/style/global.css" />
+    <link rel="stylesheet" href="../static/style/styles_dashboard.css" />
+  </head>
+  <body>
+    <main class="premium">
+      <section class="premium_card">
+        <div class="premium_header">
+          <img
+            src="../static/images/diamond.png"
+            class="premium_icon"
+            alt="Иконка Premium"
+          />
+          <h1 class="premium_title">SportBuddy Premium</h1>
+        </div>
+        <p class="premium_subtitle">Открой больше возможностей для игры</p>
+        <div class="premium_features">
+          <div class="feature">
+            <img
+              src="../static/images/ok.png"
+              class="feature_icon"
+              alt="Галочка"
+            />
+            Записывайся на игры раньше других
+          </div>
+          <div class="feature">
+            <img
+              src="../static/images/ok.png"
+              class="feature_icon"
+              alt="Галочка"
+            />
+            Участвуй в рейтинговых матчах
+          </div>
+          <div class="feature">
+            <img
+              src="../static/images/ok.png"
+              class="feature_icon"
+              alt="Галочка"
+            />
+            Отслеживай подробную статистику
+          </div>
+          <div class="feature">
+            <img
+              src="../static/images/ok.png"
+              class="feature_icon"
+              alt="Галочка"
+            />
+            Персонализируй свой профиль
+          </div>
+        </div>
+        <div class="premium_price">199 ₽ / месяц</div>
+        <form th:action="@{/subscription/upgrade}" method="post">
+          <button class="premium_btn" type="submit">Купить Premium</button>
+        </form>
+        <a href="/dashboard" class="premium_back"> ← Вернуться в кабинет </a>
+      </section>
+    </main>
+  </body>
+</html>
