@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Участники — SportBuddy</title>
+    <link rel="stylesheet" href="../static/fonts/fonts.css" />
+    <link rel="stylesheet" href="../static/style/global.css" />
+    <link rel="stylesheet" href="../static/style/styles_participants.css" />
+  </head>
+  <body>
+    <main class="pt">
+      <section class="pt_hero">
+        <div class="pt_header">
+          <div class="pt_brand">
+            <img
+              class="pt_logo"
+              src="../static/images/logo.svg"
+              alt="SportBuddy"
+            />
+          </div>
+        </div>
+        <div class="pt_hero-grid">
+          <div class="pt_hero-text">
+            <div class="pt_hero-middle">
+              <div
+                class="pt_title"
+                th:text="${sportType} + ' — ' + ${courtName}"
+              >
+                Футбол — ФОК Звёздный
+              </div>
+              <div class="pt_subtitle" th:text="'Игра в ' + ${timeSlot}">
+                Игра в 18:00 – 19:00
+              </div>
+            </div>
+            <div class="pt_actions">
+              <a class="pt_btn pt_btn-ghost" th:href="@{/court/my-bookings}">
+                ← Назад к моим записям
+              </a>
+            </div>
+          </div>
+          <aside class="pt_chat-card">
+            <div class="pt_chat-title">Чат события</div>
+            <div class="pt_chat-subtitle">
+              Создай или открой чат в Max для всех участников
+            </div>
+            <div id="chat-section" class="pt_chat-body"></div>
+          </aside>
+        </div>
+      </section>
+      <section class="pt_list">
+        <div class="pt_list-head">
+          <div class="pt_list-title">Список участников</div>
+          <div
+            class="pt_list-meta"
+            th:text="'Всего: ' + ${participants.size()}"
+          >
+            Всего: 0
+          </div>
+        </div>
+        <div
+          class="pt_empty"
+          th:if="${participants == null || participants.isEmpty()}"
+        >
+          <div class="pt_empty-title">Пока никто не записался</div>
+          <div class="pt_empty-text">
+            Зайди позже — участники появятся здесь
+          </div>
+        </div>
+        <div
+          class="pt_grid"
+          th:if="${participants != null && !participants.isEmpty()}"
+        >
+          <article class="p_card" th:each="participant : ${participants}">
+            <div class="p_name" th:text="${participant.getFullName()}">
+              Иван Иванов
+            </div>
+            <div
+              class="p_tg"
+              th:if="${participant.telegramUsername != null and !participant.telegramUsername.isEmpty()}"
+            >
+              <span class="p_tg-label">Telegram:</span>
+              <span
+                class="p_tg-value"
+                th:text="'@' + ${participant.telegramUsername}"
+                >@username</span
+              >
+            </div>
+            <div
+              class="p_tg p_tg-empty"
+              th:if="${participant.telegramUsername == null or participant.telegramUsername.isEmpty()}"
+            >
+              <span class="p_tg-muted">Telegram не указан</span>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+    <script>
+      window.__PT_DATA__ = {
+        timeSlotId: /*[[${timeSlotId}]]*/ null,
+        chatUrl: /*[[${chatUrl}]]*/ null,
+        chatCreationLockTime: /*[[${chatCreationLockTime}]]*/ null,
+        chatCreatorFullName: /*[[${chatCreatorFullName}]]*/ null,
+        currentUserId: /*[[${currentUserId}]]*/ null,
+        chatCreatorId: /*[[${chatCreatorId}]]*/ null,
+      };
+    </script>
+    <script src="../static/js/participants.js"></script>
+  </body>
+</html>
