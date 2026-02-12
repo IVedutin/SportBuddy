@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${court.name} + ' — детали'">Детали площадки</title>
+    <link rel="stylesheet" href="../static/fonts/fonts.css" />
+    <link rel="stylesheet" href="../static/style/global.css" />
+    <link rel="stylesheet" href="../static/style/styles_court_details.css" />
+  </head>
+  <body>
+    <main class="court">
+      <section class="court_hero">
+        <div class="court_header">
+          <div class="court_brand">
+            <img
+              class="court_logo"
+              src="../static/images/logo.svg"
+              alt="SportBuddy"
+            />
+          </div>
+        </div>
+        <div class="court_hero-grid">
+          <div class="court_hero-text">
+            <div class="court_hero-middle">
+              <div class="court_title" th:text="${court.name}">
+                ФОК Звёздный
+              </div>
+              <div class="court_subtitle">Детали площадки и отзывы игроков</div>
+            </div>
+            <div class="court_actions">
+              <a class="court_btn court_btn-ghost" href="/court/booking"
+                >← Назад к выбору</a
+              >
+            </div>
+          </div>
+          <aside class="court_info">
+            <div class="court_info-row">
+              <div class="court_info-label">Адрес</div>
+              <div class="court_info-value" th:text="${court.address}">
+                Город, улица, дом
+              </div>
+            </div>
+            <div class="court_info-row">
+              <div class="court_info-label">Время работы</div>
+              <div class="court_info-value" th:text="${court.operatingHours}">
+                09:00 – 22:00
+              </div>
+            </div>
+            <div class="court_info-row">
+              <div class="court_info-label">Дни работы</div>
+              <div class="court_info-value" th:text="${court.workingDays}">
+                Ежедневно
+              </div>
+            </div>
+            <div class="court_info-row court_info-rating">
+              <div class="court_info-label">Рейтинг</div>
+              <div class="court_info-value">
+                <span
+                  class="rating_chip"
+                  th:text="${avgRating != null ? #numbers.formatDecimal(avgRating, 1, 1) : '—'}"
+                  >—</span
+                >
+                <span
+                  class="rating_muted"
+                  th:text="${reviews != null ? '(' + reviews.size() + ' отзывов)' : ''}"
+                  >(0 отзывов)</span
+                >
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+      <section class="court_reviews">
+        <div class="section_head">
+          <div class="section_title">Отзывы</div>
+          <div class="section_subtitle">Что говорят игроки о площадке</div>
+        </div>
+        <div class="empty" th:if="${reviews == null || reviews.isEmpty()}">
+          <div class="empty__title">Отзывов пока нет</div>
+          <div class="empty__text">
+            Будь первым — это поможет другим игрокам
+          </div>
+        </div>
+        <div
+          class="reviews_grid"
+          th:if="${reviews != null && !reviews.isEmpty()}"
+        >
+          <article class="review_card" th:each="review : ${reviews}">
+            <div class="review_top">
+              <div
+                class="review_author"
+                th:text="${review.author.firstName} + ' ' + ${review.author.lastName}"
+              >
+                Иван Иванов
+              </div>
+              <div class="review_rating">
+                <span
+                  class="review_rating-chip"
+                  th:text="${review.rating} + ' / 5'"
+                  >5 / 5</span
+                >
+              </div>
+            </div>
+            <div class="review_text" th:text="${review.comment}">
+              Отличная площадка! Ровное покрытие, удобные раздевалки.
+            </div>
+            <div
+              class="review_date"
+              th:text="${#temporals.format(review.createdAt, 'dd.MM.yyyy HH:mm')}"
+            >
+              20.01.2026 18:40
+            </div>
+          </article>
+        </div>
+        <!-- (опционально) Кнопка/ссылка на форму отзыва -->
+        <!--
+    <div class="review_actions">
+      <a class="court_btn" th:href="@{/court/{id}/review(id=${court.id})}">Оставить отзыв</a>
+    </div>
+    -->
+      </section>
+    </main>
+  </body>
+</html>
