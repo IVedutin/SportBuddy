@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Новая площадка — SportBuddy</title>
+    <link rel="stylesheet" href="../static/fonts/fonts.css" />
+    <link rel="stylesheet" href="../static/style/global.css" />
+    <link rel="stylesheet" href="../static/style/styles_add_court.css" />
+  </head>
+  <body>
+    <main class="addcourt">
+      <section class="addcourt_card">
+        <div class="addcourt_header">
+          <div class="addcourt_brand">
+            <img
+              class="addcourt_logo"
+              src="../static/images/logo.svg"
+              alt="SportBuddy"
+            />
+          </div>
+        </div>
+        <div class="addcourt_top">
+          <h1 class="addcourt_title">Новая площадка</h1>
+          <p class="addcourt_subtitle">
+            Заполни данные — мы отправим площадку на модерацию
+          </p>
+        </div>
+        <form class="addcourt_form" action="#" method="post">
+          <label class="addcourt_label">
+            <span class="addcourt_label-text">
+              Название <span class="addcourt_required">*</span>
+            </span>
+            <input
+              class="addcourt_input"
+              type="text"
+              name="name"
+              id="name"
+              placeholder="Например, Arena Park"
+              required
+            />
+          </label>
+          <label class="addcourt_label">
+            <span class="addcourt_label-text">
+              Адрес <span class="addcourt_required">*</span>
+            </span>
+            <input
+              class="addcourt_input"
+              type="text"
+              name="address"
+              id="address"
+              placeholder="Город, улица, дом"
+              required
+            />
+          </label>
+          <div class="addcourt_row">
+            <label class="addcourt_label">
+              <span class="addcourt_label-text">
+                Время работы <span class="addcourt_required">*</span>
+              </span>
+              <input
+                class="addcourt_input"
+                type="text"
+                name="operatingHours"
+                id="operatingHours"
+                placeholder="09:00 – 22:00"
+                required
+              />
+            </label>
+            <label class="addcourt_label">
+              <span class="addcourt_label-text">
+                Дни работы <span class="addcourt_required">*</span>
+              </span>
+              <input
+                class="addcourt_input"
+                type="text"
+                name="workingDays"
+                id="workingDays"
+                placeholder="Ежедневно"
+                required
+              />
+            </label>
+          </div>
+          <div class="addcourt_row">
+            <label class="addcourt_label">
+              <span class="addcourt_label-text">
+                Вид спорта <span class="addcourt_required">*</span>
+              </span>
+              <select
+                class="addcourt_select"
+                name="sportType"
+                id="sportType"
+                required
+              >
+                <option value="" selected disabled>Выбрать вид спорта</option>
+                <option value="football">Футбол</option>
+                <option value="tennis">Теннис</option>
+                <option value="basketball">Баскетбол</option>
+                <option value="volleyball">Волейбол</option>
+              </select>
+            </label>
+            <label class="addcourt_label">
+              <span class="addcourt_label-text">
+                Количество игроков (макс.) <span class="addcourt_required">*</span>
+              </span>
+              <input
+                class="addcourt_input"
+                type="number"
+                name="maxPlayers"
+                id="maxPlayers"
+                min="2"
+                step="1"
+                placeholder="10"
+                required
+              />
+            </label>
+          </div>
+          <label class="addcourt_label">
+            <span class="addcourt_label-text">Комментарий (необязательно)</span>
+            <textarea
+              class="addcourt_textarea"
+              name="comment"
+              id="comment"
+              rows="4"
+              placeholder="Есть парковка, покрытие — искусственная трава, оплата на месте..."
+            ></textarea>
+          </label>
+          <div class="addcourt_actions">
+            <button class="addcourt_button" type="submit">
+              Отправить на модерацию
+            </button>
+            <a class="addcourt_button addcourt_button-ghost" href="/dashboard">
+              Вернуться в кабинет
+            </a>
+          </div>
+          <p class="addcourt_hint">
+            Нажимая «Отправить», вы подтверждаете, что информация верна
+          </p>
+        </form>
+      </section>
+    </main>
+    <script>
+      document
+        .querySelector(".addcourt_form")
+        .addEventListener("submit", (e) => {
+          e.preventDefault();
+        });
+    </script>
+  </body>
+</html>
