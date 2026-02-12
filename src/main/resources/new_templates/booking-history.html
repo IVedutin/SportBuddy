@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>История игр — SportBuddy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/fonts/fonts.css" />
+    <link rel="stylesheet" href="../static/style/global.css" />
+    <link rel="stylesheet" href="../static/style/styles_history.css" />
+  </head>
+  <body>
+    <main class="history">
+      <section class="history_hero">
+        <div class="history_header">
+          <div class="history_brand">
+            <img
+              class="history_logo"
+              src="../static/images/logo.svg"
+              alt="SportBuddy"
+            />
+          </div>
+        </div>
+        <div class="history_hero-grid">
+          <div class="history_hero-text">
+            <div class="history_hero-middle">
+              <div class="history_title">История игр</div>
+              <div class="history_subtitle">
+                Все завершенные встречи в одном месте
+              </div>
+            </div>
+            <a class="history_btn history_btn-ghost" href="/dashboard">
+              В кабинет
+            </a>
+          </div>
+          <div class="history_hero-right">
+            <div class="history_stat">
+              <div class="history_stat-label">Сыграно матчей</div>
+              <div class="history_stat-value" th:text="${playedCount} ?: 0">
+                0
+              </div>
+            </div>
+            <div class="history_stat">
+              <div class="history_stat-label">Любимый спорт</div>
+              <div class="history_stat-value" th:text="${favoriteSport ?: '—'}">
+                —
+              </div>
+            </div>
+            <div class="history_stat">
+              <div class="history_stat-label">Последняя игра</div>
+              <div class="history_stat-value" th:text="${lastGameDate ?: '—'}">
+                —
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="history_list">
+        <div
+          class="history_empty"
+          th:if="${bookings == null || bookings.isEmpty()}"
+        >
+          <div class="history_empty-title">У вас пока нет завершенных игр</div>
+          <div class="history_empty-text">
+            Сыграй матч — и он появится здесь
+          </div>
+        </div>
+        <div
+          class="history_grid"
+          th:if="${bookings != null && !bookings.isEmpty()}"
+        >
+          <article class="hm_card" th:each="booking : ${bookings}">
+            <div class="hm_top">
+              <div
+                class="hm_title"
+                th:text="${booking.sportType} + ' — ' + ${booking.courtName}"
+              >
+                Футбол — ФОК Звёздный
+              </div>
+              <div class="hm_badge">Завершено</div>
+            </div>
+            <div class="hm_meta">
+              <div class="hm_meta-row">
+                <span th:text="${booking.timeSlot}"> 18:00 – 19:00 </span>
+              </div>
+              <div class="hm_meta-row">
+                <span th:text="${booking.date}"> 2026-01-20 </span>
+              </div>
+              <div class="hm_meta-row">
+                <span class="hm_meta-muted">Участников:</span>
+                <span th:text="${booking.participantCount}"> 5 </span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
