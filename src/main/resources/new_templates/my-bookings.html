@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Мои записи — SportBuddy</title>
+    <link rel="stylesheet" href="../static/fonts/fonts.css" />
+    <link rel="stylesheet" href="../static/style/global.css" />
+    <link rel="stylesheet" href="../static/style/styles_my_bookings.css" />
+  </head>
+  <body>
+    <main class="mb">
+      <section class="mb_hero">
+        <div class="mb_header">
+          <div class="mb_brand">
+            <img
+              class="mb_logo"
+              src="../static/images/logo.svg"
+              alt="SportBuddy"
+            />
+          </div>
+        </div>
+        <div class="mb_hero-grid">
+          <div class="mb_hero-text">
+            <div class="mb_hero-middle">
+              <div class="mb_title">Мои записи</div>
+              <div class="mb_subtitle">
+                Предстоящие игры и управление бронированием
+              </div>
+              <div class="mb_filters">
+                <div class="mb_search">
+                  <input
+                    id="mbSearch"
+                    class="mb_input"
+                    type="text"
+                    placeholder="Поиск: спорт, площадка, дата..."
+                  />
+                </div>
+                <button id="mbClear" class="mb_btn mb_btn-clear" type="button">
+                  Очистить
+                </button>
+              </div>
+            </div>
+            <div class="mb_actions">
+              <a class="mb_btn" href="/court/booking">Записаться на игру</a>
+              <a class="mb_btn mb_btn-ghost" href="/dashboard">В кабинет</a>
+            </div>
+          </div>
+          <aside class="mb_hero-right">
+            <div class="mb_stat">
+              <div class="mb_stat-label">Всего записей</div>
+              <div
+                class="mb_stat-value"
+                th:text="${bookings != null ? bookings.size() : 0}"
+              >
+                0
+              </div>
+            </div>
+            <div class="mb_stat">
+              <div class="mb_stat-label">Ближайшая игра</div>
+              <div class="mb_stat-value" th:text="${nextGameDate ?: '—'}">
+                —
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+      <section class="mb_list">
+        <div class="mb_empty" th:if="${bookings == null || bookings.isEmpty()}">
+          <div class="mb_empty-title">У вас пока нет записей на игры</div>
+          <div class="mb_empty-text">
+            Нажми «Записаться на игру», чтобы найти площадку и команду
+          </div>
+        </div>
+        <div class="mb_grid" th:if="${bookings != null && !bookings.isEmpty()}">
+          <article
+            class="bk_card"
+            th:each="booking : ${bookings}"
+            th:attr="data-search=${(booking.sportType ?: '') + ' ' + (booking.courtName ?: '') + ' ' + (booking.date ?: '') + ' ' + (booking.timeSlot ?: '')}"
+          >
+            <div class="bk_top">
+              <div
+                class="bk_title"
+                th:text="${booking.sportType} + ' — ' + ${booking.courtName}"
+              >
+                Футбол — ФОК Звёздный
+              </div>
+              <div class="bk_badge" th:text="${booking.date}">2026-01-20</div>
+            </div>
+            <div class="bk_meta">
+              <div class="bk_meta-row">
+                <span class="bk_meta-muted">Время:</span>
+                <span th:text="${booking.timeSlot}"> 18:00 – 19:00 </span>
+              </div>
+              <div class="bk_meta-row">
+                <span class="bk_meta-muted">Дата:</span>
+                <span th:text="${booking.date}"> 2026-01-20 </span>
+              </div>
+              <div class="bk_meta-row">
+                <span class="bk_meta-muted">Участников:</span>
+                <span th:text="${booking.participantCount}"> 0 </span>
+              </div>
+            </div>
+            <div class="bk_actions">
+              <a
+                class="bk_btn bk_btn-ghost"
+                th:href="@{/court/participants/{id}(id=${booking.timeSlotId})}"
+              >
+                Участники
+              </a>
+              <a
+                class="bk_btn bk_btn-court"
+                th:href="@{/court/{id}(id=${booking.courtId})}"
+              >
+                Детали площадки
+              </a>
+              <button
+                type="button"
+                class="bk_btn bk_btn-danger cancel-btn"
+                th:attr="data-booking-id=${booking.id}"
+              >
+                Отменить
+              </button>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+    <script src="../static/js/my_bookings.js"></script>
+  </body>
+</html>
