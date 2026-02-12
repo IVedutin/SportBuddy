@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Запись на игру — SportBuddy</title>
+    <link rel="stylesheet" href="../static/fonts/fonts.css" />
+    <link rel="stylesheet" href="../static/style/global.css" />
+    <link rel="stylesheet" href="../static/style/styles_booking.css" />
+  </head>
+  <body>
+    <main class="bkng">
+      <section class="bkng_hero">
+        <div class="bkng_header">
+          <div class="bkng_brand">
+            <img
+              class="bkng_logo"
+              src="../static/images/logo.svg"
+              alt="SportBuddy"
+            />
+          </div>
+        </div>
+        <div class="bkng_hero-grid">
+          <div class="bkng_hero-text">
+            <div class="bkng_hero-middle">
+              <div class="bkng_title">Запись на игру</div>
+              <div class="bkng_subtitle">
+                Выбери спорт, площадку и удобное время
+              </div>
+            </div>
+            <div class="bkng_actions">
+              <a class="bkng_btn bkng_btn-ghost" href="/dashboard">В кабинет</a>
+              <a class="bkng_btn bkng_btn-court" href="/court/my-bookings"
+                >Мои записи</a
+              >
+            </div>
+          </div>
+          <aside class="bkng_hero-right">
+            <div class="bkng_stat">
+              <div class="bkng_stat-label">Шаг 1</div>
+              <div class="bkng_stat-value">Выбор спорта</div>
+            </div>
+            <div class="bkng_stat">
+              <div class="bkng_stat-label">Шаг 2</div>
+              <div class="bkng_stat-value">Выбор площадки</div>
+            </div>
+            <div class="bkng_stat">
+              <div class="bkng_stat-label">Шаг 3</div>
+              <div class="bkng_stat-value">Выбор времени</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+      <section class="bkng_card">
+        <div class="bkng_block">
+          <div class="bkng_block-title">Выбери игру</div>
+          <div class="bkng_field">
+            <label class="bkng_label" for="sport-type-select">Вид спорта</label>
+            <select id="sport-type-select" name="sportType" class="bkng_select">
+              <option value="" selected disabled hidden>
+                Выбрать вид спорта
+              </option>
+              <option
+                th:each="sportType : ${sportTypes}"
+                th:value="${sportType.id}"
+                th:text="${sportType.name}"
+              ></option>
+            </select>
+          </div>
+          <div class="bkng_field" id="court-section" style="display: none">
+            <label class="bkng_label" for="court-select">Площадка</label>
+            <select id="court-select" name="court" class="bkng_select">
+              <option value="" selected disabled hidden>
+                Выбрать площадку
+              </option>
+            </select>
+            <div id="details-link-container" class="bkng_details"></div>
+          </div>
+          <div id="timeSection" class="bkng_time" style="display: none">
+            <div class="bkng_label">Доступное время</div>
+            <div id="dayTabs" class="bkng_tabs"></div>
+            <div id="timePills" class="bkng_pills"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="../static/js/booking.js"></script>
+  </body>
+</html>
