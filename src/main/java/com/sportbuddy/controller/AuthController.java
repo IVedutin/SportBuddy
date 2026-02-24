@@ -2,7 +2,7 @@ package com.sportbuddy.controller;
 
 import com.sportbuddy.entity.User;
 import com.sportbuddy.repository.UserRepository;
-import com.sportbuddy.service.SmsService;
+import com.sportbuddy.service.EmailService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,38 +16,75 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
-    private SmsService smsService;
+    private EmailService emailService;
 
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("/send-code")
-    public ResponseEntity<String> sendCode(@RequestParam String phone) {
-        String cleanPhone = phone.replaceAll("[^0-9]", "");
+    // Временное хранилище для кодов
+    private final Map<String, String> emailVerificationCodes = new ConcurrentHashMap<>();
 
-        // Проверяем, есть ли такой юзер
-        if (!userRepository.existsByPhone(cleanPhone)) {
-            return ResponseEntity.badRequest().body("Этот номер не зарегистрирован!");
-        }
-
-        smsService.sendSms(cleanPhone);
-        return ResponseEntity.ok("Код отправлен");
+    // DTO для запроса
+    public static class EmailCodeRequest {
+        public String email;
     }
 
-    @PostMapping("/login-phone")
-    public ResponseEntity<String> loginByPhone(@RequestParam String phone,
-                                               @RequestParam String code,
-                                               HttpServletRequest request) {
-        String cleanPhone = phone.replaceAll("[^0-9]", "");
+    public static class EmailLoginRequest {
+        public String email;
+        public String code;
+    }
 
-        if (smsService.verifyCode(cleanPhone, code)) {
-            User user = userRepository.findByPhone(cleanPhone).orElseThrow();
+    // Отправка кода на email
+    @PostMapping("/send-email-code")
+    public ResponseEntity<String> sendEmailCode(@RequestBody EmailCodeRequest request) {
+        String email = request.email;
+
+        // Проверяем, есть ли такой юзер
+        if (!userRepository.findByEmail(email).isPresent()) {
+            return ResponseEntity.badRequest().body("Этот email не зарегистрирован!");
+        }
+
+        // Генерируем код
+        String code = String.format("%06d", (int) (Math.random() * 1000000));
+
+        // Сохраняем код
+        emailVerificationCodes.put(email, code);
+
+        // Отправляем код на email
+        String message = String.format(
+                "Ваш код для входа в SportBuddy: %s\n\n" +
+                        "Никому не сообщайте этот код!",
+                code
+        );
+
+        emailService.sendEmail(email, "Код для входа в SportBuddy", message);
+
+        return ResponseEntity.ok("Код отправлен на email");
+    }
+
+    // Вход по коду из email
+    @PostMapping("/login-email")
+    public ResponseEntity<String> loginByEmail(@RequestBody EmailLoginRequest request,
+                                               HttpServletRequest httpRequest) {
+        String email = request.email;
+        String code = request.code;
+
+        // Проверяем код
+        String storedCode = emailVerificationCodes.get(email);
+
+        if (storedCode != null && storedCode.equals(code)) {
+            // Удаляем использованный код
+            emailVerificationCodes.remove(email);
+
+            User user = userRepository.findByEmail(email).orElseThrow();
 
             // ВХОД В СИСТЕМУ БЕЗ ПАРОЛЯ
             String role = user.getRoleName().startsWith("ROLE_") ? user.getRoleName() : "ROLE_" + user.getRole();
@@ -59,12 +96,12 @@ public class AuthController {
             SecurityContext sc = SecurityContextHolder.getContext();
             sc.setAuthentication(auth);
 
-            HttpSession session = request.getSession(true);
+            HttpSession session = httpRequest.getSession(true);
             session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
 
-            return ResponseEntity.ok("Успешно");
+            return ResponseEntity.ok("Успешный вход");
         } else {
-            return ResponseEntity.badRequest().body("Неверный код");
+            return ResponseEntity.badRequest().body("Неверный или просроченный код");
         }
     }
 }

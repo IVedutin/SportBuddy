@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Админ-панель SportBuddy</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; }
+        h1 { color: #333; }
+        .court-card {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .court-info { max-width: 70%; }
+        .court-info h3 { margin: 0 0 5px 0; color: #007bff; }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .btn-approve { background-color: #28a745; color: white; }
+        .btn-reject { background-color: #dc3545; color: white; }
+        .btn:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+<h1>🛡️ Модерация площадок</h1>
+<div id="courts-container">
+    <p>Загрузка заявок...</p>
+</div>
+<hr>
+<h1>🏆 Создать Рейтинговый Матч</h1>
+
+<div class="court-card" style="display: block;">
+    <label>Название матча:</label><br>
+    <input type="text" id="matchTitle" placeholder="Финал лиги..." style="width: 100%; margin-bottom: 10px;"><br>
+
+    <!-- НОВЫЕ ПОЛЯ -->
+    <label>Место проведения (Название):</label><br>
+    <input type="text" id="matchLocation" placeholder="Центральный Парк, Корт №5" style="width: 100%; margin-bottom: 10px;"><br>
+
+    <label>Адрес (Гео или текст):</label><br>
+    <input type="text" id="matchAddress" placeholder="ул. Ленина, д. 1" style="width: 100%; margin-bottom: 10px;"><br>
+    <!-- КОНЕЦ НОВЫХ ПОЛЕЙ -->
+
+    <label>Описание:</label><br>
+    <textarea id="matchDesc" rows="3" style="width: 100%; margin-bottom: 10px;"></textarea><br>
+
+    <label>Начало:</label>
+    <input type="datetime-local" id="matchStart" style="margin-bottom: 10px;">
+
+    <label>Конец:</label>
+    <input type="datetime-local" id="matchEnd" style="margin-bottom: 10px;"><br>
+
+    <button class="btn btn-approve" onclick="createRankedMatch()">Создать матч</button>
+</div>
+
+
+<script>
+    // Функция загрузки списка
+    async function loadPendingCourts() {
+        try {
+            // Запрос к твоему новому контроллеру
+            const response = await fetch('/api/admin/pending-courts');
+
+            if (!response.ok) throw new Error("Ошибка доступа или сервера");
+
+            const courts = await response.json();
+            const container = document.getElementById('courts-container');
+            container.innerHTML = '';
+
+            if (courts.length === 0) {
+                container.innerHTML = '<p>Заявок нет. Всё чисто! 😎</p>';
+                return;
+            }
+
+            courts.forEach(court => {
+                const card = document.createElement('div');
+                card.className = 'court-card';
+                card.innerHTML = `
+                    <div class="court-info">
+                        <h3>${court.name}</h3>
+                        <p><strong>Адрес:</strong> ${court.address}</p>
+                        <p><strong>Вид спорта ID:</strong> ${court.sportType ? court.sportType.name : 'Не указан'}</p>
+                        <p><strong>Владелец ID:</strong> ${court.owner ? court.owner.id : 'Не указан'}</p>
+                    </div>
+                    <div class="actions">
+                        <button class="btn btn-approve" onclick="approveCourt(${court.id})">✅ Одобрить</button>
+                        <button class="btn btn-reject" onclick="rejectCourt(${court.id})">❌ Удалить</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        } catch (error) {
+            console.error(error);
+            document.getElementById('courts-container').innerHTML = '<p style="color:red">Ошибка загрузки. Ты точно Админ?</p>';
+        }
+    }
+
+    // Функция одобрения
+    async function approveCourt(id) {
+        if(!confirm('Точно одобрить эту площадку?')) return;
+
+        await fetch(`/api/admin/approve-court/${id}`, { method: 'POST' });
+        loadPendingCourts(); // Обновить список
+    }
+
+    // Функция удаления
+    async function rejectCourt(id) {
+        if(!confirm('Точно удалить заявку?')) return;
+
+        await fetch(`/api/admin/reject-court/${id}`, { method: 'DELETE' });
+        loadPendingCourts(); // Обновить список
+    }
+
+    // Запускаем при загрузке страницы
+    loadPendingCourts();
+    async function createRankedMatch() {
+        const data = {
+            title: document.getElementById('matchTitle').value,
+            locationName: document.getElementById('matchLocation').value, // Новое
+            address: document.getElementById('matchAddress').value,       // Новое
+            description: document.getElementById('matchDesc').value,
+            startTime: document.getElementById('matchStart').value,
+            endTime: document.getElementById('matchEnd').value
+        };
+
+            if(!data.title || !data.locationName || !data.startTime) {
+            alert("Заполни название, место и время!");
+            return;}
+
+            try {
+                const response = await fetch('/api/admin/create-ranked-match', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert("Матч создан! 🔥");
+                    // Очистить поля
+                    document.getElementById('matchTitle').value = '';
+                } else {
+                    alert("Ошибка при создании");
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Ошибка сети");
+            }
+        }
+</script>
+</body>
+</html>

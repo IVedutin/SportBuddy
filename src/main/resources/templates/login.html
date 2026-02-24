@@ -1,39 +1,121 @@
 <!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SportBuddy - Вход в аккаунт</title>
-    <link rel="stylesheet" href="/style/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Вход — SportBuddy</title>
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+    <link rel="stylesheet" href="./style/global.css" />
+    <link rel="stylesheet" href="/style/styles_auth.css" />
 </head>
 <body>
-<div class="container">
-    <h1 class="title">SportBuddy</h1>
-    <p class="subtitle">Найди команду для игры быстро и удобно!</p>
+<main>
+    <section class="auth">
+        <div class="auth_logo">
+            <a class="auth_logo-link" href="homer.html">
+                <img
+                        class="auth_logo-image"
+                        src="/icons/logo.svg"
+                        alt="Логотип SportBuddy"
+                />
+            </a>
+        </div>
+        <div class="auth_container">
+            <h1 class="auth_title">Вход</h1>
+            <p class="auth_subtitle">Найди игроков и игры рядом с тобой</p>
 
-    <div class="card">
-        <h2 class="card-title">Вход в аккаунт</h2>
+            <!-- Форма входа -->
+            <form class="auth_form" id="loginForm">
+                <label class="auth_label">
+                    Email
+                    <input
+                            class="auth_input"
+                            type="email"
+                            id="email"
+                            name="username"
+                            placeholder="name@example.com"
+                            autocomplete="email"
+                            required
+                    />
+                </label>
+                <label class="auth_label">
+                    Пароль
+                    <input
+                            class="auth_input"
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Введите пароль"
+                            autocomplete="current-password"
+                            required
+                    />
+                </label>
+                <button class="auth_button" type="submit">Войти</button>
+                <div id="errorMessage" class="error" style="color: red; text-align: center; margin-top: 10px; display: none;"></div>
+            </form>
 
-        <form method="post" action="/login" class="register-form">
-            <div class="form-group">
-                <label for="username">Email</label>
-                <input type="email" id="username" name="username" required>
+            <div class="auth_divider">
+                <span class="auth_divider-text">или</span>
             </div>
 
-            <div class="form-group">
-                <label for="password">Пароль</label>
-                <input type="password" id="password" name="password" required>
+            <div class="auth_social">
+                <button class="auth_social-button" type="button">
+                    <img
+                            class="auth_social-icon"
+                            src="/icons/messenger-max.png"
+                            alt="Мессенджер MAX"
+                    />
+                    Войти через MAX
+                </button>
             </div>
 
-            <div class="form-actions">
-                <button type="submit" class="cta-button" style="outline: none; border: none; cursor: pointer;">Войти</button>
-                <p class="login-link"> Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
-            </div>
-        </form>
-    </div>
-</div>
+            <p class="auth_footer">
+                Нет аккаунта?
+                <a class="auth_link" href="/register">Зарегистрироваться</a>
+            </p>
+        </div>
+    </section>
+</main>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault(); // Отменяем стандартную отправку формы
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('errorMessage');
+
+      // Скрываем предыдущее сообщение об ошибке
+      errorDiv.style.display = 'none';
+
+      // Создаем FormData для отправки
+      const formData = new FormData();
+      formData.append('username', email);
+      formData.append('password', password);
+
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          // Успешный вход - редирект на главную или дашборд
+          window.location.href = '/dashboard'; // или '/homer.html'
+        } else {
+          // Обработка ошибок от сервера
+          const errorText = await response.text();
+          errorDiv.textContent = errorText || 'Неверный email или пароль';
+          errorDiv.style.display = 'block';
+        }
+      } catch (error) {
+        // Ошибка сети или другие проблемы
+        errorDiv.textContent = 'Ошибка соединения с сервером';
+        errorDiv.style.display = 'block';
+        console.error('Login error:', error);
+      }
+    });
+</script>
 </body>
 </html>

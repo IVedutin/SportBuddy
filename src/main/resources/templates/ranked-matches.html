@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Рейтинговые матчи — SportBuddy</title>
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+    <link rel="stylesheet" href="/style/global.css" />
+    <link rel="stylesheet" href="/style/styles_matches.css" />
+</head>
+<body>
+<main class="ranked">
+    <section class="ranked_hero">
+        <div class="ranked_header">
+            <div class="ranked_brand">
+                <img
+                        class="ranked_logo"
+                        src="/icons/logo.svg"
+                        alt="SportBuddy"
+                />
+            </div>
+        </div>
+        <div class="ranked_hero-grid">
+            <div class="ranked_hero-text">
+                <h1 class="ranked_title">Рейтинговые матчи</h1>
+                <div class="ranked_hero-middle">
+                    <p class="ranked_subtitle">
+                        Участвуй в матчах, зарабатывай рейтинг и отслеживай прогресс
+                    </p>
+                    <div class="ranked_filters ranked_filters-dash">
+                        <div class="ranked_search">
+                            <input
+                                    id="q"
+                                    class="ranked_input"
+                                    type="text"
+                                    placeholder="Поиск по названию/локации..."
+                            />
+                        </div>
+                        <select id="sport" class="ranked_select">
+                            <option value="all">Все виды спорта</option>
+                            <option value="football">Футбол</option>
+                            <option value="basketball">Баскетбол</option>
+                            <option value="tennis">Теннис</option>
+                            <option value="volleyball">Волейбол</option>
+                        </select>
+                        <button id="refresh" class="ranked_btn" type="button">
+                            Обновить
+                        </button>
+                    </div>
+                </div>
+                <a
+                        href="/dashboard"
+                        class="ranked_btn ranked_btn-ghost ranked_cabinet-btn"
+                >В кабинет</a
+                >
+            </div>
+            <div class="ranked_hero-card">
+                <div class="ranked_stat">
+                    <div class="ranked_stat-label">Доступно матчей</div>
+                    <div id="matchesCount" class="ranked_stat-value">—</div>
+                </div>
+                <div class="ranked_stat">
+                    <div class="ranked_stat-label">Ближайший старт</div>
+                    <div id="nearestTime" class="ranked_stat-value">—</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="ranked_list">
+        <div id="matches-list" class="ranked_grid"></div>
+        <div id="empty" class="ranked_empty" style="display: none">
+            <div class="ranked_empty-title">Пока нет доступных матчей</div>
+            <div class="ranked_empty-text">
+                Попробуй обновить список или зайди позже
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    async function loadMatches() {
+      const container = document.getElementById('matches-list');
+      const emptyDiv = document.getElementById('empty');
+      const matchesCountSpan = document.getElementById('matchesCount');
+      const nearestTimeSpan = document.getElementById('nearestTime');
+
+      container.innerHTML = 'Загрузка...';
+
+      try {
+        const response = await fetch('/court/api/ranked-matches');
+        const matches = await response.json();
+
+        container.innerHTML = '';
+
+        if (matches.length === 0) {
+          container.style.display = 'none';
+          emptyDiv.style.display = 'block';
+          matchesCountSpan.textContent = '0';
+          nearestTimeSpan.textContent = '—';
+          return;
+        }
+
+        container.style.display = 'grid';
+        emptyDiv.style.display = 'none';
+        matchesCountSpan.textContent = matches.length;
+
+        // Находим ближайший матч
+        const now = new Date();
+        const futureMatches = matches.filter(m => new Date(m.startTime) > now);
+        if (futureMatches.length > 0) {
+          const nearest = new Date(Math.min(...futureMatches.map(m => new Date(m.startTime))));
+          nearestTimeSpan.textContent = nearest.toLocaleString('ru-RU', {
+            day: 'numeric',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        } else {
+          nearestTimeSpan.textContent = '—';
+        }
+
+        matches.forEach(match => {
+          // Формируем список участников
+          let participantsHtml = '<div class="ranked_participants"><strong>Участники:</strong><br>';
+          if (match.participants && match.participants.length > 0) {
+            match.participants.forEach(p => {
+              participantsHtml += `
+                <span class="ranked_participant">
+                  ${p.firstName || 'Игрок'}
+                  <span class="ranked_rating-badge">★ ${p.rating || 0}</span>
+                </span>`;
+            });
+          } else {
+            participantsHtml += '<span style="color:gray">Пока никого...</span>';
+          }
+          participantsHtml += '</div>';
+
+          const card = document.createElement('div');
+          card.className = 'ranked_card';
+          card.innerHTML = `
+            <div class="ranked_card-title">${match.title}</div>
+            <div class="ranked_card-info">
+              <span class="ranked_label">📍</span> ${match.locationName} (${match.address})
+            </div>
+            <div class="ranked_card-info">
+              <span class="ranked_label">🕒</span> ${new Date(match.startTime).toLocaleString('ru-RU')}
+            </div>
+            <div class="ranked_card-desc">${match.description}</div>
+            ${participantsHtml}
+            <button class="ranked_btn ranked_btn-join" onclick="joinMatch(${match.id})">Принять участие</button>
+          `;
+          container.appendChild(card);
+        });
+      } catch (error) {
+        container.innerHTML = 'Ошибка загрузки матчей';
+        console.error(error);
+      }
+    }
+
+    async function joinMatch(matchId) {
+      if (!confirm('Записаться на этот матч?')) return;
+
+      try {
+        const response = await fetch(`/court/api/ranked-matches/join/${matchId}`, {
+          method: 'POST'
+        });
+
+        if (response.ok) {
+          alert('Вы успешно записаны!');
+          loadMatches(); // Обновляем список
+        } else {
+          const error = await response.text();
+          alert('Ошибка записи: ' + error);
+        }
+      } catch (error) {
+        alert('Ошибка сети');
+      }
+    }
+
+    // Функция фильтрации (будет доработана позже)
+    function filterMatches() {
+      const searchTerm = document.getElementById('q').value.toLowerCase();
+      const sportFilter = document.getElementById('sport').value;
+
+      // Здесь можно добавить фильтрацию, но пока просто перезагружаем
+      loadMatches();
+    }
+
+    // Обработчики событий
+    document.getElementById('refresh').addEventListener('click', loadMatches);
+    document.getElementById('q').addEventListener('input', filterMatches);
+    document.getElementById('sport').addEventListener('change', filterMatches);
+
+    // Загружаем матчи при загрузке страницы
+    loadMatches();
+</script>
+</body>
+</html>

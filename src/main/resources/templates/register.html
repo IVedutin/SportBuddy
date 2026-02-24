@@ -1,113 +1,440 @@
 <!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SportBuddy - Регистрация</title>
-    <link rel="stylesheet" href="/style/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Регистрация — SportBuddy</title>
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+    <link rel="stylesheet" href="./style/global.css" />
+    <link rel="stylesheet" href="/style/styles_auth.css" />
+    <style>
+        /* Дополнительные стили для подтверждения email */
+        .message {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .error-message {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        .success-message {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        .email-verify-container {
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+        .verify-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .verify-button:hover {
+            background-color: #5a6268;
+        }
+        .verify-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .code-input-group {
+            margin-top: 10px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+        .verified-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .auth_input[readonly] {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <h1 class="title">SportBuddy</h1>
-    <p class="subtitle">Найди команду для игры быстро и удобно!</p>
+<main>
+    <section class="auth">
+        <div class="auth_logo">
+            <a class="auth_logo-link" href="homer.html">
+                <img
+                        class="auth_logo-image"
+                        src="/icons/logo.svg"
+                        alt="Логотип SportBuddy"
+                />
+            </a>
+        </div>
+        <div class="auth_container auth_container-signup">
+            <h1 class="auth_title">Регистрация</h1>
+            <p class="auth_subtitle">Создай аккаунт и находи игроков рядом</p>
 
-    <div class="card">
-        <h2 class="card-title">Регистрация</h2>
+            <!-- Форма регистрации -->
+            <form class="auth_form auth_form-signup" id="registerForm">
+                <!-- Имя -->
+                <label class="auth_label">
+                    <span class="auth_label-text">
+                        Имя <span class="auth_required">*</span>
+                    </span>
+                    <input
+                            class="auth_input"
+                            type="text"
+                            id="firstName"
+                            name="first_name"
+                            placeholder="Иван"
+                            required
+                    />
+                </label>
 
-        <form id="registerForm" class="register-form">
-            <div class="form-group">
-                <label for="firstName">Имя *</label>
-                <input type="text" id="firstName" name="firstName" required>
-            </div>
+                <!-- Фамилия -->
+                <label class="auth_label">
+                    <span class="auth_label-text">
+                        Фамилия <span class="auth_required">*</span>
+                    </span>
+                    <input
+                            class="auth_input"
+                            type="text"
+                            id="lastName"
+                            name="last_name"
+                            placeholder="Иванов"
+                            required
+                    />
+                </label>
 
-            <div class="form-group">
-                <label for="lastName">Фамилия *</label>
-                <input type="text" id="lastName" name="lastName" required>
-            </div>
+                <!-- Email с подтверждением (кнопка ПОД полем) -->
+                <label class="auth_label">
+                    <span class="auth_label-text">
+                        Email <span class="auth_required">*</span>
+                    </span>
+                    <input
+                            class="auth_input"
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="name@example.com"
+                            autocomplete="email"
+                            required
+                    />
+                </label>
 
-            <div class="form-group">
-                <label for="email">Email *</label>
-                <input type="email" id="email" name="email" required>
-            </div>
+                <!-- Кнопка подтверждения email (под полем) -->
+                <div class="email-verify-container">
+                    <button type="button" class="verify-button" id="sendCodeBtn" onclick="sendEmailCode()">
+                        Подтвердить email
+                    </button>
+                </div>
 
-            <div class="form-group">
-                <label for="phone">Телефон *</label>
-                <input type="tel" id="phone" name="phone" required>
-            </div>
+                <!-- Секция ввода кода подтверждения -->
+                <div id="emailCodeSection" class="code-input-group">
+                    <p style="margin-bottom: 10px; color: #28a745; font-size: 14px;">
+                        ✓ Код отправлен на ваш email
+                    </p>
+                    <label class="auth_label">
+                        <span class="auth_label-text">
+                            Код подтверждения <span class="auth_required">*</span>
+                        </span>
+                        <input
+                                class="auth_input"
+                                type="text"
+                                id="emailCode"
+                                placeholder="Введите 6-значный код"
+                                maxlength="6"
+                        />
+                    </label>
+                    <button type="button" class="verify-button" onclick="verifyEmailCode()" style="margin-top: 10px;">
+                        Проверить код
+                    </button>
+                    <p style="font-size: 12px; color: #6c757d; margin-top: 10px; text-align: center;">
+                        Не пришло письмо?
+                        <a href="#" onclick="sendEmailCode(); return false;" style="color: #ff9800;">
+                            Отправить снова
+                        </a>
+                    </p>
+                </div>
 
-            <div class="form-group">
-                <label for="password">Пароль *</label>
-                <input type="password" id="password" name="password" required>
-            </div>
+                <!-- Скрытое поле для статуса подтверждения email -->
+                <input type="hidden" id="emailVerified" value="false" />
 
-            <div class="form-group">
-                <label for="confirmPassword">Подтверждение пароля *</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required>
-            </div>
+                <!-- Телефон -->
+                <label class="auth_label">
+                    <span class="auth_label-text">
+                        Телефон <span class="auth_required">*</span>
+                    </span>
+                    <input
+                            class="auth_input"
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="+7 900 000-00-00"
+                            autocomplete="tel"
+                            required
+                    />
+                </label>
 
-            <div class="form-actions">
-                <button type="submit" class="cta-button" style="outline: none; border: none; cursor: pointer;">
-                    Зарегистрироваться
-                </button>
-                <p class="login-link">
-                    Уже есть аккаунт? <a href="/login">Войти</a> 
-                </p>
-            </div>
-        </form>
-    </div>
-</div>
+                <!-- Пароль -->
+                <label class="auth_label">
+                    <span class="auth_label-text">
+                        Пароль <span class="auth_required">*</span>
+                    </span>
+                    <input
+                            class="auth_input"
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Придумайте пароль"
+                            autocomplete="new-password"
+                            required
+                    />
+                </label>
+
+                <!-- Подтверждение пароля -->
+                <label class="auth_label">
+                    <span class="auth_label-text">
+                        Подтверждение пароля <span class="auth_required">*</span>
+                    </span>
+                    <input
+                            class="auth_input"
+                            type="password"
+                            id="confirmPassword"
+                            name="password_confirm"
+                            placeholder="Повторите пароль"
+                            autocomplete="new-password"
+                            required
+                    />
+                </label>
+
+                <!-- Кнопка регистрации -->
+                <button class="auth_button" type="submit" id="registerBtn">Создать аккаунт</button>
+
+                <!-- Блок для сообщений -->
+                <div id="messageContainer" class="message"></div>
+            </form>
+
+            <p class="auth_footer">
+                Уже есть аккаунт?
+                <a class="auth_link" href="/login">Войти</a>
+            </p>
+        </div>
+    </section>
+</main>
 
 <script>
-    document.getElementById('registerForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+    let currentEmail = '';
+    let isEmailVerified = false;
 
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
+    // Показ сообщений
+    function showMessage(text, type) {
+        const container = document.getElementById('messageContainer');
+        container.textContent = text;
+        container.className = `message ${type}-message`;
+        container.style.display = 'block';
 
-    if (password !== confirmPassword) {
-        alert('Пароли не совпадают!');
-        return;
+        // Автоматически скрыть через 5 секунд
+        setTimeout(() => {
+            container.style.display = 'none';
+        }, 5000);
     }
 
-    const formData = {
-        firstName: document.getElementById('firstName').value,
-        lastName: document.getElementById('lastName').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        password: password,
-        confirmPassword: confirmPassword
-    };
+    // Отправка кода на email
+    async function sendEmailCode() {
+        const email = document.getElementById('email').value;
+        const sendBtn = document.getElementById('sendCodeBtn');
 
-    // Отправка данных на сервер
-    fetch('/api/register', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => { throw err; });
+        if (!email || !email.includes('@') || !email.includes('.')) {
+            showMessage('Введите корректный email', 'error');
+            return;
         }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            alert('Регистрация успешна!');
-            window.location.href = '/';
-        } else {
-            alert('Ошибка регистрации: ' + data.message);
+
+        try {
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Отправка...';
+
+            currentEmail = email;
+
+            const response = await fetch('/api/register/send-email-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Показываем секцию для ввода кода
+                document.getElementById('emailCodeSection').style.display = 'block';
+                showMessage('Код подтверждения отправлен на ваш email', 'success');
+
+                // Блокируем поле email от изменений
+                document.getElementById('email').readOnly = true;
+                sendBtn.textContent = 'Код отправлен';
+            } else {
+                showMessage(data.message || 'Ошибка при отправке кода', 'error');
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Подтвердить email';
+            }
+        } catch (error) {
+            showMessage('Ошибка соединения с сервером', 'error');
+            console.error('Send code error:', error);
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Подтвердить email';
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Ошибка при регистрации: ' + (error.message || 'Неизвестная ошибка'));
+    }
+
+    // Проверка кода из email
+    async function verifyEmailCode() {
+        const code = document.getElementById('emailCode').value;
+
+        if (!code || code.length !== 6) {
+            showMessage('Введите 6-значный код', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/register/verify-email-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: currentEmail,
+                    code: code
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Email подтвержден
+                isEmailVerified = true;
+                document.getElementById('emailVerified').value = 'true';
+
+                // Добавляем бейдж подтверждения
+                const emailField = document.getElementById('email');
+                const parent = emailField.parentElement;
+                const badge = document.createElement('span');
+                badge.className = 'verified-badge';
+                badge.textContent = '✓ Email подтвержден';
+
+                // Удаляем старый бейдж если есть
+                const oldBadge = document.querySelector('.verified-badge');
+                if (oldBadge) oldBadge.remove();
+
+                parent.appendChild(badge);
+
+                // Блокируем кнопку отправки кода
+                document.getElementById('sendCodeBtn').disabled = true;
+                document.getElementById('sendCodeBtn').textContent = 'Email подтвержден';
+
+                // Скрываем секцию ввода кода
+                document.getElementById('emailCodeSection').style.display = 'none';
+
+                showMessage('Email успешно подтвержден!', 'success');
+            } else {
+                showMessage(data.message || 'Неверный код', 'error');
+            }
+        } catch (error) {
+            showMessage('Ошибка соединения с сервером', 'error');
+            console.error('Verify code error:', error);
+        }
+    }
+
+    // Отправка формы регистрации
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // Проверка подтверждения email
+        if (document.getElementById('emailVerified').value !== 'true') {
+            showMessage('Пожалуйста, подтвердите email', 'error');
+            return;
+        }
+
+        // Получаем значения полей
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        // Валидация паролей
+        if (password !== confirmPassword) {
+            showMessage('Пароли не совпадают!', 'error');
+            return;
+        }
+
+        // Валидация длины пароля
+        if (password.length < 6) {
+            showMessage('Пароль должен быть не менее 6 символов', 'error');
+            return;
+        }
+
+        // Валидация телефона
+        const phoneDigits = phone.replace(/\D/g, '');
+        if (phoneDigits.length < 10) {
+            showMessage('Введите корректный номер телефона', 'error');
+            return;
+        }
+
+        // Блокируем кнопку отправки
+        const registerBtn = document.getElementById('registerBtn');
+        registerBtn.disabled = true;
+        registerBtn.textContent = 'Регистрация...';
+
+        // Подготавливаем данные для отправки
+        const formData = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone,
+            password: password
+        };
+
+        try {
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showMessage('Регистрация успешна! Перенаправляем на страницу входа...', 'success');
+
+                // Перенаправляем на страницу входа через 2 секунды
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 2000);
+            } else {
+                showMessage(data.message || 'Ошибка при регистрации', 'error');
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Создать аккаунт';
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            showMessage('Ошибка соединения с сервером', 'error');
+            registerBtn.disabled = false;
+            registerBtn.textContent = 'Создать аккаунт';
+        }
     });
-});
 </script>
 </body>
 </html>

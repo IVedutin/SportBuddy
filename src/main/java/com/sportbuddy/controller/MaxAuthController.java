@@ -25,7 +25,7 @@ public class MaxAuthController {
 
     @GetMapping("/")
     public String home() {
-        return "index";
+        return "home";
     }
 
     @GetMapping("/register")

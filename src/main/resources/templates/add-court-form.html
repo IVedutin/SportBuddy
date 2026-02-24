@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Новая площадка — SportBuddy</title>
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+    <link rel="stylesheet" href="/style/global.css" />
+    <link rel="stylesheet" href="/style/styles_add_court.css" />
+</head>
+<body>
+<main class="addcourt">
+    <section class="addcourt_card">
+        <div class="addcourt_header">
+            <div class="addcourt_brand">
+                <img
+                        class="addcourt_logo"
+                        src="/icons/logo.svg"
+                        alt="SportBuddy"
+                />
+            </div>
+        </div>
+        <div class="addcourt_top">
+            <h1 class="addcourt_title">Новая площадка</h1>
+            <p class="addcourt_subtitle">
+                Заполни данные — мы отправим площадку на модерацию
+            </p>
+        </div>
+
+        <!-- Форма с Thymeleaf (как в старом фронте) -->
+        <form class="addcourt_form" th:action="@{/court/add-new}" th:object="${sportCourt}" method="post">
+
+            <label class="addcourt_label">
+            <span class="addcourt_label-text">
+              Название <span class="addcourt_required">*</span>
+            </span>
+                <input
+                        class="addcourt_input"
+                        type="text"
+                        th:field="*{name}"
+                        id="name"
+                        placeholder="Например, Arena Park"
+                        required
+                />
+            </label>
+
+            <label class="addcourt_label">
+            <span class="addcourt_label-text">
+              Адрес <span class="addcourt_required">*</span>
+            </span>
+                <input
+                        class="addcourt_input"
+                        type="text"
+                        th:field="*{address}"
+                        id="address"
+                        placeholder="Город, улица, дом"
+                        required
+                />
+            </label>
+
+            <div class="addcourt_row">
+                <label class="addcourt_label">
+              <span class="addcourt_label-text">
+                Время работы <span class="addcourt_required">*</span>
+              </span>
+                    <input
+                            class="addcourt_input"
+                            type="text"
+                            th:field="*{operatingHours}"
+                            id="operatingHours"
+                            placeholder="09:00 – 22:00"
+                            required
+                    />
+                </label>
+
+                <label class="addcourt_label">
+              <span class="addcourt_label-text">
+                Дни работы <span class="addcourt_required">*</span>
+              </span>
+                    <input
+                            class="addcourt_input"
+                            type="text"
+                            th:field="*{workingDays}"
+                            id="workingDays"
+                            placeholder="Ежедневно"
+                            required
+                    />
+                </label>
+            </div>
+
+            <div class="addcourt_row">
+                <label class="addcourt_label">
+              <span class="addcourt_label-text">
+                Вид спорта <span class="addcourt_required">*</span>
+              </span>
+                    <select
+                            class="addcourt_select"
+                            th:field="*{sportType.id}"
+                            id="sportType"
+                            required
+                    >
+                        <option value="" selected disabled>Выбрать вид спорта</option>
+                        <!-- Динамическая загрузка видов спорта из БД -->
+                        <option th:each="type : ${sportTypes}"
+                                th:value="${type.id}"
+                                th:text="${type.name}"></option>
+                    </select>
+                </label>
+
+                <label class="addcourt_label">
+              <span class="addcourt_label-text">
+                Количество игроков (макс.) <span class="addcourt_required">*</span>
+              </span>
+                    <input
+                            class="addcourt_input"
+                            type="number"
+                            th:field="*{maxPlayers}"
+                            id="maxPlayers"
+                            min="2"
+                            step="1"
+                            placeholder="10"
+                            required
+                    />
+                </label>
+            </div>
+
+
+
+            <div class="addcourt_actions">
+                <button class="addcourt_button" type="submit">
+                    Отправить на модерацию
+                </button>
+
+                <a class="addcourt_button addcourt_button-ghost" th:href="@{/dashboard}">
+                    Вернуться в кабинет
+                </a>
+            </div>
+
+            <p class="addcourt_hint">
+                Нажимая «Отправить», вы подтверждаете, что информация верна
+            </p>
+        </form>
+    </section>
+</main>
+
+<script>
+    // Небольшая валидация на клиенте (как в старом фронте)
+    document.querySelector(".addcourt_form").addEventListener("submit", (e) => {
+      const maxPlayers = document.getElementById('maxPlayers').value;
+      if (maxPlayers < 2) {
+        e.preventDefault();
+        alert('Максимальное количество игроков должно быть не менее 2');
+      }
+    });
+</script>
+</body>
+</html>

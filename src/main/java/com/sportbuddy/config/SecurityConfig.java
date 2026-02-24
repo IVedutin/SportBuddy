@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
 @EnableMethodSecurity
 @Configuration
 @EnableWebSecurity
@@ -19,10 +20,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-
-                        .requestMatchers("/", "/home", "/register", "/auth/**","/api/auth/**",
-                                "/api/register", "/api/hello", "/api/greet","/api/register/send-code",
-                                "/style/**", "/icons/**", "/css/**", "/js/**","/court/ranked-matches", "/court/api/ranked-matches").permitAll()
+                        // Статические ресурсы
+                        .requestMatchers("/static/**", "/style/**", "/icons/**", "/css/**", "/js/**", "/fonts/**").permitAll()
+                        // Публичные страницы
+                        .requestMatchers("/", "/home", "/register", "/login", "/auth.html", "/signup.html", "/homer.html").permitAll()
+                        // API эндпоинты для регистрации и авторизации - ВАЖНО!
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/register/**").permitAll()
+                        .requestMatchers("/api/register/send-email-code").permitAll()
+                        .requestMatchers("/api/register/verify-email-code").permitAll()
+                        .requestMatchers("/api/register").permitAll()
+                        // Другие публичные эндпоинты
+                        .requestMatchers("/api/hello", "/api/greet").permitAll()
+                        .requestMatchers("/court/ranked-matches", "/court/api/ranked-matches").permitAll()
+                        // Все остальные запросы требуют аутентификации
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
