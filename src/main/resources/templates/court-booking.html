@@ -1,252 +1,93 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Бронирование игры в SportBuddy — выберите вид спорта, площадку и удобное время, чтобы записаться и присоединиться к другим игрокам."
+    />
     <title>Запись на игру — SportBuddy</title>
+    <link rel="icon" href="icons/icon.ico" sizes="any" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon.png" />
     <link rel="stylesheet" href="/fonts/fonts.css" />
     <link rel="stylesheet" href="/style/global.css" />
     <link rel="stylesheet" href="/style/styles_booking.css" />
-</head>
-<body>
-<main class="bkng">
-    <section class="bkng_hero">
+  </head>
+  <body>
+    <main class="bkng">
+      <section class="bkng_hero">
         <div class="bkng_header">
-            <div class="bkng_brand">
-                <img
-                        class="bkng_logo"
-                        src="/icons/logo.svg"
-                        alt="SportBuddy"
-                />
-            </div>
+          <div class="bkng_brand">
+            <img class="bkng_logo" src="/icons/logo.svg" alt="SportBuddy" />
+          </div>
         </div>
         <div class="bkng_hero-grid">
-            <div class="bkng_hero-text">
-                <div class="bkng_hero-middle">
-                    <div class="bkng_title">Запись на игру</div>
-                    <div class="bkng_subtitle">
-                        Выбери спорт, площадку и удобное время
-                    </div>
-                </div>
-                <div class="bkng_actions">
-                    <a class="bkng_btn bkng_btn-ghost" href="/dashboard">В кабинет</a>
-                    <a class="bkng_btn bkng_btn-court" href="/court/my-bookings"
-                    >Мои записи</a
-                    >
-                </div>
+          <div class="bkng_hero-text">
+            <div class="bkng_hero-middle">
+              <div class="bkng_title">Запись на игру</div>
+              <div class="bkng_subtitle">
+                Выбери спорт, площадку и удобное время
+              </div>
             </div>
-            <aside class="bkng_hero-right">
-                <div class="bkng_stat">
-                    <div class="bkng_stat-label">Шаг 1</div>
-                    <div class="bkng_stat-value">Выбор спорта</div>
-                </div>
-                <div class="bkng_stat">
-                    <div class="bkng_stat-label">Шаг 2</div>
-                    <div class="bkng_stat-value">Выбор площадки</div>
-                </div>
-                <div class="bkng_stat">
-                    <div class="bkng_stat-label">Шаг 3</div>
-                    <div class="bkng_stat-value">Выбор времени</div>
-                </div>
-            </aside>
+            <div class="bkng_actions">
+              <a class="bkng_btn bkng_btn-ghost" href="/dashboard">В кабинет</a>
+              <a class="bkng_btn bkng_btn-court" href="/court/my-bookings"
+                >Мои записи</a
+              >
+            </div>
+          </div>
+          <aside class="bkng_hero-right">
+            <div class="bkng_stat">
+              <div class="bkng_stat-label">Шаг 1</div>
+              <div class="bkng_stat-value">Выбор спорта</div>
+            </div>
+            <div class="bkng_stat">
+              <div class="bkng_stat-label">Шаг 2</div>
+              <div class="bkng_stat-value">Выбор площадки</div>
+            </div>
+            <div class="bkng_stat">
+              <div class="bkng_stat-label">Шаг 3</div>
+              <div class="bkng_stat-value">Выбор времени</div>
+            </div>
+          </aside>
         </div>
-    </section>
-    <section class="bkng_card">
+      </section>
+      <section class="bkng_card">
         <div class="bkng_block">
-            <div class="bkng_block-title">Выбери игру</div>
-            <div class="bkng_field">
-                <label class="bkng_label" for="sport-type-select">Вид спорта</label>
-                <select id="sport-type-select" name="sportType" class="bkng_select">
-                    <option value="" selected disabled hidden>
-                        Выбрать вид спорта
-                    </option>
-                    <option
-                            th:each="sportType : ${sportTypes}"
-                            th:value="${sportType.id}"
-                            th:text="${sportType.name}"
-                    ></option>
-                </select>
-            </div>
-            <div class="bkng_field" id="court-section" style="display: none">
-                <label class="bkng_label" for="court-select">Площадка</label>
-                <select id="court-select" name="court" class="bkng_select">
-                    <option value="" selected disabled hidden>
-                        Выбрать площадку
-                    </option>
-                </select>
-                <div id="details-link-container" class="bkng_details"></div>
-            </div>
-            <div id="timeSection" class="bkng_time" style="display: none">
-                <div class="bkng_label">Доступное время</div>
-                <div id="dayTabs" class="bkng_tabs"></div>
-                <div id="timePills" class="bkng_pills"></div>
-            </div>
+          <div class="bkng_block-title">Выбери игру</div>
+          <div class="bkng_field">
+            <label class="bkng_label" for="sport-type-select">Вид спорта</label>
+            <select id="sport-type-select" name="sportType" class="bkng_select">
+              <option value="" selected disabled hidden>
+                Выбрать вид спорта
+              </option>
+              <option
+                th:each="sportType : ${sportTypes}"
+                th:value="${sportType.id}"
+                th:text="${sportType.name}"
+              ></option>
+            </select>
+          </div>
+          <div class="bkng_field" id="court-section" style="display: none">
+            <label class="bkng_label" for="court-select">Площадка</label>
+            <select id="court-select" name="court" class="bkng_select">
+              <option value="" selected disabled hidden>
+                Выбрать площадку
+              </option>
+            </select>
+            <div id="details-link-container" class="bkng_details"></div>
+          </div>
+          <div id="timeSection" class="bkng_time" style="display: none">
+            <div class="bkng_label">Доступное время</div>
+            <div id="dayTabs" class="bkng_tabs"></div>
+            <div id="timePills" class="bkng_pills"></div>
+          </div>
         </div>
-    </section>
-</main>
-<script>
-    const sportSelect = document.getElementById('sport-type-select');
-    const courtSelect = document.getElementById('court-select');
-    const courtSection = document.getElementById('court-section');
-    const timeSection = document.getElementById('timeSection');
-    const dayTabs = document.getElementById('dayTabs');
-    const timePills = document.getElementById('timePills');
-    const detailsLinkContainer = document.getElementById('details-link-container');
-    const MAX_PLAYERS = 20;
-
-    function resetTimeUI() {
-      timeSection.style.display = 'none';
-      dayTabs.innerHTML = '';
-      timePills.innerHTML = '';
-    }
-
-    function resetCourtUI() {
-      courtSection.style.display = 'none';
-      courtSelect.innerHTML = '<option value="" selected disabled hidden>Выбрать площадку</option>';
-      detailsLinkContainer.innerHTML = '';
-    }
-
-    // Когда выбирают вид спорта
-    sportSelect.addEventListener('change', function () {
-      const sportTypeId = this.value;
-      resetTimeUI();
-      resetCourtUI();
-      if (!sportTypeId) return;
-
-      fetch('/court/courts/' + sportTypeId)
-        .then(r => r.json())
-        .then(courts => {
-          courtSelect.innerHTML = '<option value="" selected disabled hidden>Выбрать площадку</option>';
-          courts.forEach(court => {
-            const opt = document.createElement('option');
-            opt.value = court.id;
-            opt.textContent = court.name;
-            courtSelect.appendChild(opt);
-          });
-          courtSection.style.display = 'block';
-        });
-    });
-
-    // Когда выбирают площадку
-    courtSelect.addEventListener('change', function () {
-      const courtId = this.value;
-      resetTimeUI();
-      detailsLinkContainer.innerHTML = '';
-
-      if (!courtId) return;
-
-      // Добавляем ссылку на детали
-      const detailsLink = document.createElement('a');
-      detailsLink.href = `/court/details/${courtId}`;
-      detailsLink.textContent = 'Подробнее и отзывы →';
-      detailsLink.style.textDecoration = 'none';
-      detailsLink.style.color = '#6c5ce7';
-      detailsLink.style.fontWeight = '600';
-      detailsLinkContainer.appendChild(detailsLink);
-
-      fetch('/court/timeslots/' + courtId)
-        .then(r => r.json())
-        .then(timeSlots => {
-          const slotsByDayAll = groupTimeSlotsByDay(timeSlots);
-          const days = Object.keys(slotsByDayAll).slice(0, 3);
-          dayTabs.innerHTML = '';
-          timePills.innerHTML = '';
-
-          if (days.length === 0) {
-            timePills.innerHTML = '<div style="padding:10px; font-weight:700;">Нет доступного времени</div>';
-            timeSection.style.display = 'block';
-            return;
-          }
-
-          days.forEach((day, idx) => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'bkng_tab' + (idx === 0 ? ' active' : '');
-            btn.textContent = day;
-            btn.onclick = () => {
-              document.querySelectorAll('.bkng_tab').forEach(x => x.classList.remove('active'));
-              btn.classList.add('active');
-              renderDay(day, slotsByDayAll);
-            };
-            dayTabs.appendChild(btn);
-          });
-
-          renderDay(days[0], slotsByDayAll);
-          timeSection.style.display = 'block';
-        });
-    });
-
-    function renderDay(day, slotsByDayAll) {
-      timePills.innerHTML = '';
-      const slots = slotsByDayAll[day] || [];
-      slots.forEach(slot => {
-        const startTime = formatTime(slot.startTime);
-        const endTime = formatTime(slot.endTime);
-        const pill = document.createElement('button');
-        pill.type = 'button';
-        pill.className = 'bkng_pill';
-        pill.innerHTML = `
-          <div class="t">${startTime} – ${endTime}</div>
-          <div class="s">Бесплатно • 0/${MAX_PLAYERS}</div>
-        `;
-        pill.onclick = () => bookTimeSlot(slot.id);
-        timePills.appendChild(pill);
-
-        fetch('/court/booking-count/' + slot.id)
-          .then(r => r.json())
-          .then(count => {
-            pill.innerHTML = `
-              <div class="t">${startTime} – ${endTime}</div>
-              <div class="s">Бесплатно • ${count}/${MAX_PLAYERS}</div>
-            `;
-            if (count >= MAX_PLAYERS) {
-              pill.classList.add('full');
-              pill.disabled = true;
-            }
-          });
-      });
-    }
-
-    function groupTimeSlotsByDay(timeSlots) {
-      const groups = {};
-      timeSlots.forEach(slot => {
-        const date = new Date(slot.startTime);
-        const day = date.toLocaleDateString('ru-RU', { weekday: 'short' });
-        const dayFixed = day.charAt(0).toUpperCase() + day.slice(1, 2);
-        const dayNum = date.getDate();
-        const month = date.toLocaleDateString('ru-RU', { month: 'short' });
-        const label = `${dayFixed}, ${dayNum} ${month}`;
-        if (!groups[label]) groups[label] = [];
-        groups[label].push(slot);
-      });
-      return groups;
-    }
-
-    function formatTime(dateTimeString) {
-      const date = new Date(dateTimeString);
-      return date.toLocaleTimeString('ru-RU', {
-        hour: '2-digit',
-        minute: '2-digit',
-        timeZone: 'Europe/Saratov'
-      });
-    }
-
-    function bookTimeSlot(timeSlotId) {
-      if (confirm('Записаться на это время?')) {
-        fetch('/court/book', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: 'timeSlotId=' + encodeURIComponent(timeSlotId)
-        })
-        .then(response => {
-          if (response.ok) {
-            window.location.href = '/court/participants/' + timeSlotId;
-          } else {
-            alert('Ошибка записи');
-          }
-        });
-      }
-    }
-</script>
-</body>
+      </section>
+    </main>
+    <script src="/js/booking.js"></script>
+  </body>
 </html>
