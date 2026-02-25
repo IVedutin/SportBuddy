@@ -1,262 +1,191 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Мои записи SportBuddy — просматривайте предстоящие игры, управляйте бронированиями, отменяйте участие и оставляйте отзывы о площадках."
+    />
     <title>Мои записи — SportBuddy</title>
+    <link rel="icon" href="icons/icon.ico" sizes="any" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon.png" />
     <link rel="stylesheet" href="/fonts/fonts.css" />
     <link rel="stylesheet" href="/style/global.css" />
     <link rel="stylesheet" href="/style/styles_my_bookings.css" />
-    <style>
-        /* Дополнительные стили для кнопки отзыва */
-        .bk_btn-review {
-            background: #10B981;
-            color: white;
-        }
-        .bk_btn-review:hover {
-            background: #0e9f6e;
-        }
-    </style>
-</head>
-<body>
-<main class="mb">
-    <section class="mb_hero">
+  </head>
+  <body>
+    <main class="mb">
+      <section class="mb_hero">
         <div class="mb_header">
-            <div class="mb_brand">
-                <img
-                        class="mb_logo"
-                        src="/icons/logo.svg"
-                        alt="SportBuddy"
-                />
-            </div>
+          <div class="mb_brand">
+            <img class="mb_logo" src="/icons/logo.svg" alt="SportBuddy" />
+          </div>
         </div>
         <div class="mb_hero-grid">
-            <div class="mb_hero-text">
-                <div class="mb_hero-middle">
-                    <div class="mb_title">Мои записи</div>
-                    <div class="mb_subtitle">
-                        Предстоящие игры и управление бронированием
-                    </div>
-                    <div class="mb_filters">
-                        <div class="mb_search">
-                            <input
-                                    id="mbSearch"
-                                    class="mb_input"
-                                    type="text"
-                                    placeholder="Поиск: спорт, площадка, дата..."
-                            />
-                        </div>
-                        <button id="mbClear" class="mb_btn mb_btn-clear" type="button">
-                            Очистить
-                        </button>
-                    </div>
+          <div class="mb_hero-text">
+            <div class="mb_hero-middle">
+              <div class="mb_title">Мои записи</div>
+              <div class="mb_subtitle">
+                Предстоящие игры и управление бронированием
+              </div>
+              <div class="mb_filters">
+                <div class="mb_search">
+                  <input
+                    id="mbSearch"
+                    class="mb_input"
+                    type="text"
+                    placeholder="Поиск: спорт, площадка, дата..."
+                  />
                 </div>
-                <div class="mb_actions">
-                    <a class="mb_btn" href="/court/booking">Записаться на игру</a>
-                    <a class="mb_btn mb_btn-ghost" href="/dashboard">В кабинет</a>
-                </div>
+                <button id="mbClear" class="mb_btn mb_btn-clear" type="button">
+                  Очистить
+                </button>
+              </div>
             </div>
-            <aside class="mb_hero-right">
-                <div class="mb_stat">
-                    <div class="mb_stat-label">Всего записей</div>
-                    <div
-                            class="mb_stat-value"
-                            th:text="${bookings != null ? bookings.size() : 0}"
-                    >
-                        0
-                    </div>
-                </div>
-                <div class="mb_stat">
-                    <div class="mb_stat-label">Ближайшая игра</div>
-                    <div class="mb_stat-value" th:text="${nextGameDate ?: '—'}">
-                        —
-                    </div>
-                </div>
-            </aside>
+            <div class="mb_actions">
+              <a class="mb_btn" href="/court/booking">Записаться на игру</a>
+              <a class="mb_btn mb_btn-ghost" href="/dashboard">В кабинет</a>
+            </div>
+          </div>
+          <aside class="mb_hero-right">
+            <div class="mb_stat">
+              <div class="mb_stat-label">Всего записей</div>
+              <div
+                class="mb_stat-value"
+                th:text="${bookings != null ? bookings.size() : 0}"
+              >
+                0
+              </div>
+            </div>
+            <div class="mb_stat">
+              <div class="mb_stat-label">Ближайшая игра</div>
+              <div class="mb_stat-value" th:text="${nextGameDate ?: '—'}">
+                —
+              </div>
+            </div>
+          </aside>
         </div>
-    </section>
-    <section class="mb_list">
+      </section>
+      <section class="mb_list">
         <div class="mb_empty" th:if="${bookings == null || bookings.isEmpty()}">
-            <div class="mb_empty-title">У вас пока нет записей на игры</div>
-            <div class="mb_empty-text">
-                Нажми «Записаться на игру», чтобы найти площадку и команду
-            </div>
+          <div class="mb_empty-title">У вас пока нет записей на игры</div>
+          <div class="mb_empty-text">
+            Нажми «Записаться на игру», чтобы найти площадку и команду
+          </div>
         </div>
         <div class="mb_grid" th:if="${bookings != null && !bookings.isEmpty()}">
-            <article
-                    class="bk_card"
-                    th:each="booking : ${bookings}"
-                    th:attr="data-search=${(booking.sportType ?: '') + ' ' + (booking.courtName ?: '') + ' ' + (booking.date ?: '') + ' ' + (booking.timeSlot ?: '')}"
-            >
-                <div class="bk_top">
-                    <div
-                            class="bk_title"
-                            th:text="${booking.sportType} + ' — ' + ${booking.courtName}"
-                    >
-                        Футбол — ФОК Звёздный
-                    </div>
-                    <div class="bk_badge" th:text="${booking.date}">2026-01-20</div>
-                </div>
-                <div class="bk_meta">
-                    <div class="bk_meta-row">
-                        <span class="bk_meta-muted">Время:</span>
-                        <span th:text="${booking.timeSlot}"> 18:00 – 19:00 </span>
-                    </div>
-                    <div class="bk_meta-row">
-                        <span class="bk_meta-muted">Дата:</span>
-                        <span th:text="${booking.date}"> 2026-01-20 </span>
-                    </div>
-                    <div class="bk_meta-row">
-                        <span class="bk_meta-muted">Участников:</span>
-                        <span th:text="${booking.participantCount}"> 0 </span>
-                    </div>
-                </div>
-                <div class="bk_actions">
-                    <a
-                            class="bk_btn bk_btn-ghost"
-                            th:href="@{/court/participants/{id}(id=${booking.timeSlotId})}"
-                    >
-                        Участники
-                    </a>
-                    <a
-                            class="bk_btn bk_btn-court"
-                            th:href="@{/court/details/{id}(id=${booking.courtId})}"
-                    >
-                        Детали площадки
-                    </a>
-                    <button type="button"
-                            class="bk_btn bk_btn-review review-btn"
-                            th:attr="data-court-id=${booking.courtId}, data-court-name=${booking.courtName}">
-                        Отзыв
-                    </button>
-                    <button
-                            type="button"
-                            class="bk_btn bk_btn-danger cancel-btn"
-                            th:attr="data-booking-id=${booking.id}"
-                    >
-                        Отменить
-                    </button>
-                </div>
-            </article>
+          <article
+            class="bk_card"
+            th:each="booking : ${bookings}"
+            th:attr="data-search=${(booking.sportType ?: '') + ' ' + (booking.courtName ?: '') + ' ' + (booking.date ?: '') + ' ' + (booking.timeSlot ?: '')}"
+          >
+            <div class="bk_top">
+              <div
+                class="bk_title"
+                th:text="${booking.sportType} + ' — ' + ${booking.courtName}"
+              >
+                Футбол — ФОК Звёздный
+              </div>
+              <div class="bk_badge" th:text="${booking.date}">2026-01-20</div>
+            </div>
+            <div class="bk_meta">
+              <div class="bk_meta-row">
+                <span class="bk_meta-muted">Время:</span>
+                <span th:text="${booking.timeSlot}"> 18:00 – 19:00 </span>
+              </div>
+              <div class="bk_meta-row">
+                <span class="bk_meta-muted">Дата:</span>
+                <span th:text="${booking.date}"> 2026-01-20 </span>
+              </div>
+              <div class="bk_meta-row">
+                <span class="bk_meta-muted">Участников:</span>
+                <span th:text="${booking.participantCount}"> 0 </span>
+              </div>
+            </div>
+            <div class="bk_actions">
+              <a
+                class="bk_btn bk_btn-ghost"
+                th:href="@{/court/participants/{id}(id=${booking.timeSlotId})}"
+              >
+                Участники
+              </a>
+              <a
+                class="bk_btn bk_btn-court"
+                th:href="@{/court/details/{id}(id=${booking.courtId})}"
+              >
+                Детали площадки
+              </a>
+              <button
+                type="button"
+                class="bk_btn bk_btn-review review-btn"
+                th:attr="data-court-id=${booking.courtId}, data-court-name=${booking.courtName}"
+              >
+                Отзыв
+              </button>
+              <button
+                type="button"
+                class="bk_btn bk_btn-danger cancel-btn"
+                th:attr="data-booking-id=${booking.id}"
+              >
+                Отменить
+              </button>
+            </div>
+          </article>
         </div>
-    </section>
-</main>
-
-<!-- МОДАЛЬНОЕ ОКНО ДЛЯ ОТЗЫВОВ -->
-<div id="review-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; display:none; align-items:center; justify-content:center; padding: 1rem;">
-    <div class="mb_card" style="max-width: 500px; margin: 0; padding: 2.5rem; background: white; border-radius: 20px;">
-        <h2 id="review-modal-title" class="mb_title" style="font-size: 2rem; margin-bottom: 2rem;">Оставить отзыв</h2>
-        <form th:action="@{/court/add-review}" method="post" style="margin-top: 0;">
-            <input type="hidden" id="courtIdInput" name="courtId">
-
-            <div class="mb_field">
-                <label class="mb_label" for="rating">Оценка (1-5):</label>
-                <input id="rating" class="mb_input" type="number" name="rating" min="1" max="5" required>
-            </div>
-
-            <div class="mb_field">
-                <label class="mb_label" for="comment">Комментарий:</label>
-                <textarea id="comment" class="mb_input" name="comment" rows="4" required style="height: auto; resize: vertical;"></textarea>
-            </div>
-
-            <div class="mb_actions" style="margin-top: 2rem; flex-direction: column;">
-                <button type="submit" class="mb_btn" style="width: 100%;">Отправить отзыв</button>
-                <button type="button" id="close-modal-btn" class="mb_btn mb_btn-ghost" style="width: 100%; margin-top: 1rem;">Закрыть</button>
-            </div>
+      </section>
+    </main>
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ОТЗЫВОВ -->
+    <div id="review-modal" class="review_modal">
+      <div class="review_modal-content mb_card">
+        <h2 id="review-modal-title" class="mb_title review_modal-title">
+          Оставить отзыв
+        </h2>
+        <form
+          th:action="@{/court/add-review}"
+          method="post"
+          class="review_form"
+        >
+          <input type="hidden" id="courtIdInput" name="courtId" />
+          <div class="mb_field">
+            <label class="mb_label" for="rating">Оценка (1-5):</label>
+            <input
+              id="rating"
+              class="mb_input"
+              type="number"
+              name="rating"
+              min="1"
+              max="5"
+              required
+            />
+          </div>
+          <div class="mb_field">
+            <label class="mb_label" for="comment">Комментарий:</label>
+            <textarea
+              id="comment"
+              class="mb_input review_textarea"
+              name="comment"
+              rows="4"
+              required
+            ></textarea>
+          </div>
+          <div class="mb_actions review_actions">
+            <button type="submit" class="mb_btn review_submit">
+              Отправить отзыв
+            </button>
+            <button
+              type="button"
+              id="close-modal-btn"
+              class="mb_btn mb_btn-ghost review_close"
+            >
+              Закрыть
+            </button>
+          </div>
         </form>
+      </div>
     </div>
-</div>
-
-<script>
-    // --- ФУНКЦИЯ ОТМЕНЫ ЗАПИСИ ---
-    function cancelBooking(btn) {
-        const bookingId = btn.getAttribute('data-booking-id');
-        if (!bookingId) {
-            alert('Не удалось определить bookingId');
-            return;
-        }
-
-        if (confirm('Отменить запись?')) {
-            fetch('/court/cancel-booking', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'bookingId=' + encodeURIComponent(bookingId)
-            }).then(response => {
-                if (response.ok) location.reload();
-                else alert('Ошибка отмены записи');
-            }).catch(() => alert('Ошибка сети'));
-        }
-    }
-
-    // --- ОБРАБОТЧИКИ ДЛЯ КНОПОК ОТМЕНЫ ---
-    document.querySelectorAll('.cancel-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            cancelBooking(this);
-        });
-    });
-
-    // --- СКРИПТ ДЛЯ МОДАЛЬНОГО ОКНА ОТЗЫВОВ ---
-    const reviewModal = document.getElementById('review-modal');
-    const courtIdInput = document.getElementById('courtIdInput');
-    const modalTitle = document.getElementById('review-modal-title');
-
-    // Обработчики для кнопок "Отзыв"
-    document.querySelectorAll('.review-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            const courtId = button.getAttribute('data-court-id');
-            const courtName = button.getAttribute('data-court-name');
-            courtIdInput.value = courtId;
-            modalTitle.innerText = `Отзыв о площадке: "${courtName}"`;
-            reviewModal.style.display = 'flex';
-        });
-    });
-
-    // Закрытие модального окна
-    document.getElementById('close-modal-btn').addEventListener('click', () => {
-        reviewModal.style.display = 'none';
-    });
-
-    // Закрытие по клику на фон
-    reviewModal.addEventListener('click', function(event) {
-        if (event.target === reviewModal) {
-            reviewModal.style.display = 'none';
-        }
-    });
-
-    // --- ПОИСК И ФИЛЬТРАЦИЯ ---
-    const searchInput = document.getElementById('mbSearch');
-    const clearBtn = document.getElementById('mbClear');
-    const bookingCards = document.querySelectorAll('.bk_card');
-
-    function filterBookings() {
-        const searchTerm = searchInput.value.toLowerCase().trim();
-
-        bookingCards.forEach(card => {
-            const searchData = card.getAttribute('data-search') || '';
-            if (searchTerm === '' || searchData.toLowerCase().includes(searchTerm)) {
-                card.style.display = 'flex';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-    }
-
-    function clearSearch() {
-        searchInput.value = '';
-        filterBookings();
-    }
-
-    if (searchInput) {
-        searchInput.addEventListener('input', filterBookings);
-    }
-
-    if (clearBtn) {
-        clearBtn.addEventListener('click', clearSearch);
-    }
-
-    // Инициализация: показываем все карточки
-    filterBookings();
-</script>
-</body>
+    <script src="/js/my_bookings.js"></script>
+  </body>
 </html>

@@ -404,3 +404,66 @@ body {
   gap: 10px;
   padding-top: 6px;
 }
+
+.bk_btn-review {
+  background: #10b981;
+  color: rgb(255, 255, 255);
+}
+
+.bk_btn-review:hover {
+  background: #0e9f6e;
+}
+
+/* ===== МОДАЛЬНОЕ ОКНО ОТЗЫВА ===== */
+
+.review_modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  padding: 1rem;
+}
+
+.review_modal-content {
+  max-width: 500px;
+  margin: 0;
+  padding: 2.5rem;
+  background: white;
+  border-radius: 20px;
+}
+
+.review_modal-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.review_form {
+  margin-top: 0;
+}
+
+.review_textarea {
+  height: auto;
+  resize: vertical;
+}
+
+.review_actions {
+  margin-top: 2rem;
+  flex-direction: column;
+}
+
+.review_submit,
+.review_close {
+  width: 100%;
+}
+
+.review_close {
+  margin-top: 1rem;
+}
