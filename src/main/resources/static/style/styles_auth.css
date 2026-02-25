@@ -219,3 +219,10 @@ body {
     grid-column: auto;
   }
 }
+
+.error {
+  color: rgb(255, 0, 0);
+  text-align: center;
+  margin-top: 10px;
+  display: none;
+}
