@@ -73,7 +73,7 @@
   border-bottom-right-radius: 56px;
   border-bottom-left-radius: 56px;
   overflow: hidden;
-  background-image: url("../images/hero.png");
+  background-image: url("/icons/hero.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
