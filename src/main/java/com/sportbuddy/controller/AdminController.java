@@ -2,23 +2,24 @@ package com.sportbuddy.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sportbuddy.entity.SportCourt;
-// Импорт для LocalDateTime
-import java.time.LocalDateTime;
-import java.util.List;
-
 import com.sportbuddy.service.CourtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
     @Autowired
     private CourtService courtService;
 
-    // Класс-обертка для получения данных о матче
     public static class RankedMatchRequest {
         public String title;
         public String locationName;
@@ -30,10 +31,16 @@ public class AdminController {
         public LocalDateTime endTime;
     }
 
-    // Получить список площадок на модерации
+    // Площадки на модерации
     @GetMapping("/pending-courts")
     public ResponseEntity<List<SportCourt>> getPendingCourts() {
         return ResponseEntity.ok(courtService.getPendingCourts());
+    }
+
+    // Все площадки (для CRUD в админке)
+    @GetMapping("/all-courts")
+    public ResponseEntity<List<SportCourt>> getAllCourts() {
+        return ResponseEntity.ok(courtService.getAllCourts());
     }
 
     // Одобрить площадку
@@ -43,30 +50,35 @@ public class AdminController {
         return ResponseEntity.ok("Площадка одобрена и доступна для записи");
     }
 
+    // Отклонить заявку на площадку (каскадное удаление)
+    @DeleteMapping("/reject-court/{id}")
+    public ResponseEntity<String> rejectCourt(@PathVariable Long id) {
+        try {
+            courtService.deleteCourt(id);
+            return ResponseEntity.ok("Площадка отклонена и удалена");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // Удалить одобренную площадку (каскадное удаление слотов, бронирований, отзывов)
+    @DeleteMapping("/court/{id}")
+    public ResponseEntity<?> deleteCourt(@PathVariable Long id) {
+        try {
+            courtService.deleteCourt(id);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Площадка удалена"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
     // Создать рейтинговый матч
     @PostMapping("/create-ranked-match")
     public ResponseEntity<String> createRankedMatch(@RequestBody RankedMatchRequest request) {
         courtService.createRankedMatch(
-                request.title,
-                request.locationName,
-                request.address,
-                request.description,
-                request.startTime,
-                request.endTime
+                request.title, request.locationName, request.address,
+                request.description, request.startTime, request.endTime
         );
         return ResponseEntity.ok("Матч создан!");
-    }
-
-    // Получить список всех ПЛОЩАДОК (опционально, если нужно)
-    @GetMapping("/all-courts")
-    public ResponseEntity<List<SportCourt>> getAllCourts() {
-        return ResponseEntity.ok(courtService.getCourtsBySportType(1L));
-    }
-
-    // Отклонить площадку
-    @DeleteMapping("/reject-court/{id}")
-    public ResponseEntity<String> rejectCourt(@PathVariable Long id) {
-        courtService.rejectCourt(id);
-        return ResponseEntity.ok("Площадка отклонена и удалена");
     }
 }

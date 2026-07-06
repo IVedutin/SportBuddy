@@ -7,11 +7,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +31,12 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // Временное хранилище для кодов
     private final Map<String, String> emailVerificationCodes = new ConcurrentHashMap<>();
 
@@ -42,7 +50,30 @@ public class AuthController {
         public String code;
     }
 
-    // Отправка кода на email
+    // DTO для обычного логина
+    public static class LoginRequest {
+        public String email;
+        public String password;
+    }
+
+    public static class LoginResponse {
+        private boolean success;
+        private String message;
+        private String redirect;
+
+        public LoginResponse(boolean success, String message, String redirect) {
+            this.success = success;
+            this.message = message;
+            this.redirect = redirect;
+        }
+
+        // геттеры
+        public boolean isSuccess() { return success; }
+        public String getMessage() { return message; }
+        public String getRedirect() { return redirect; }
+    }
+
+    // Отправка кода на email (для входа по коду)
     @PostMapping("/send-email-code")
     public ResponseEntity<String> sendEmailCode(@RequestBody EmailCodeRequest request) {
         String email = request.email;
@@ -102,6 +133,31 @@ public class AuthController {
             return ResponseEntity.ok("Успешный вход");
         } else {
             return ResponseEntity.badRequest().body("Неверный или просроченный код");
+        }
+    }
+
+    // НОВЫЙ МЕТОД: Обычный вход по email и паролю
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request,
+                                               HttpServletRequest httpRequest) {
+        try {
+            // Аутентификация через AuthenticationManager
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.email, request.password)
+            );
+
+            // Устанавливаем аутентификацию в контекст
+            SecurityContext sc = SecurityContextHolder.getContext();
+            sc.setAuthentication(authentication);
+
+            // Сохраняем в сессии
+            HttpSession session = httpRequest.getSession(true);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
+
+            return ResponseEntity.ok(new LoginResponse(true, "Успешный вход", "/dashboard"));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(new LoginResponse(false, "Неверный email или пароль", null));
         }
     }
 }

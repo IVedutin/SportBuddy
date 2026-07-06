@@ -17,6 +17,13 @@ public class SportCourt {
     private String address;
 
     @ManyToOne
+    @JoinColumn(name = "city_id")
+    private City city;
+
+    // геттер и сеттер
+    public City getCity() { return city; }
+    public void setCity(City city) { this.city = city; }
+    @ManyToOne
     @JoinColumn(name = "sport_type_id", nullable = false)
     private SportType sportType;
 

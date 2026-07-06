@@ -1,5 +1,6 @@
 package com.sportbuddy.controller;
 
+import com.sportbuddy.dto.ReviewDto;
 import com.sportbuddy.entity.*;
 import com.sportbuddy.repository.UserRepository;
 import com.sportbuddy.repository.CourtTimeSlotRepository;
@@ -12,9 +13,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import com.sportbuddy.entity.RankedMatch;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/court")
@@ -117,7 +120,29 @@ public class CourtController {
             return ResponseEntity.badRequest().body("Ошибка: " + e.getMessage());
         }
     }
+    @GetMapping("/api/sport-types")
+    @ResponseBody
+    public List<SportType> getAllSportTypes() {
+        return courtService.getAllSportTypes();
+    }
 
+    @GetMapping("/api/cities")
+    @ResponseBody
+    public List<City> getAllCities() {
+        return courtService.getAllCities();
+    }
+
+    @GetMapping("/api/booking-history")
+    @ResponseBody
+    public ResponseEntity<?> getBookingHistoryApi(Authentication authentication) {
+        try {
+            User user = userRepository.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+            return ResponseEntity.ok(courtService.getUserBookingHistory(user.getId()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
     // POST-метод для обработки формы
     @PostMapping("/add-new")
     public String processAddCourtForm(@ModelAttribute SportCourt sportCourt, Authentication authentication) {
@@ -139,10 +164,14 @@ public class CourtController {
         return "court-booking";
     }
 
-    // Получить площадки для выбранного вида спорта (AJAX)
     @GetMapping("/courts/{sportTypeId}")
     @ResponseBody
-    public List<SportCourt> getCourtsBySportType(@PathVariable Long sportTypeId) {
+    public List<SportCourt> getCourtsBySportType(
+            @PathVariable Long sportTypeId,
+            @RequestParam(required = false) Long cityId) {
+        if (cityId != null) {
+            return courtService.getCourtsByCityAndSportType(cityId, sportTypeId);
+        }
         return courtService.getCourtsBySportType(sportTypeId);
     }
 
@@ -236,7 +265,91 @@ public class CourtController {
             return "redirect:/dashboard";
         }
     }
+    @GetMapping("/reviews/{courtId}")
+    @ResponseBody
+    public List<ReviewDto> getCourtReviews(@PathVariable Long courtId) {
+        List<Review> reviews = courtService.getReviewsForCourt(courtId);
 
+        return reviews.stream()
+                .map(review -> {
+                    String authorName = "Неизвестный пользователь";
+                    if (review.getAuthor() != null) {
+                        authorName = review.getAuthor().getFirstName() + " " + review.getAuthor().getLastName();
+                    }
+
+                    return new ReviewDto(
+                            review.getId(),
+                            review.getComment(),
+                            review.getRating(),
+                            review.getCreatedAt(),
+                            authorName
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+    @GetMapping("/api/details/{courtId}")
+    @ResponseBody
+    public ResponseEntity<?> getCourtDetailsApi(@PathVariable Long courtId) {
+        try {
+            SportCourt court = courtService.getCourtById(courtId);
+            if (court == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(court);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // API для получения участников (JSON)
+    @GetMapping("/api/participants/{timeSlotId}")
+    @ResponseBody
+    public ResponseEntity<?> getParticipantsApi(@PathVariable Long timeSlotId) {
+        try {
+            List<ParticipantDto> participants = courtService.getParticipantsForTimeSlot(timeSlotId);
+            return ResponseEntity.ok(participants);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PostMapping("/api/add-review")
+    @ResponseBody
+    public ResponseEntity<?> addReviewApi(@RequestParam Long courtId,
+                                          @RequestParam int rating,
+                                          @RequestParam String comment,
+                                          Authentication authentication) {
+        try {
+            User user = userRepository.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            courtService.addReview(courtId, user, rating, comment);
+
+            // Возвращаем успешный ответ с JSON
+            return ResponseEntity.ok().body(Map.of(
+                    "success", true,
+                    "message", "Отзыв успешно добавлен"
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", e.getMessage()
+            ));
+        }
+    }
+    // API для получения бронирований пользователя (JSON)
+    @GetMapping("/api/my-bookings")
+    @ResponseBody
+    public ResponseEntity<?> getMyBookingsApi(Authentication authentication) {
+        try {
+            String email = authentication.getName();
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+            List<BookingDto> bookings = courtService.getUserBookings(user.getId());
+            return ResponseEntity.ok(bookings);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
     @PostMapping("/add-review")
     public String addReview(@RequestParam Long courtId,
                             @RequestParam int rating,
@@ -265,7 +378,72 @@ public class CourtController {
 
         return "court-details"; // Имя новой HTML страницы
     }
+    @GetMapping("/api/timeslot/{timeSlotId}")
+    @ResponseBody
+    public ResponseEntity<?> getTimeSlotInfo(@PathVariable Long timeSlotId) {
+        try {
+            CourtTimeSlot slot = courtTimeSlotRepository.findById(timeSlotId)
+                    .orElseThrow(() -> new RuntimeException("Слот не найден"));
 
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", slot.getId());
+            response.put("startTime", slot.getStartTime());
+            response.put("endTime", slot.getEndTime());
+            response.put("courtName", slot.getCourt().getName());
+            response.put("sportType", slot.getCourt().getSportType().getName());
+            response.put("address", slot.getCourt().getAddress());
+            response.put("maxPlayers", slot.getCourt().getMaxPlayers());
+            response.put("chatUrl", slot.getChatUrl());
+            response.put("chatCreationLockTime", slot.getChatCreationLockTime());
+
+            if (slot.getChatCreator() != null) {
+                response.put("chatCreatorId", slot.getChatCreator().getId());
+                response.put("chatCreatorFullName",
+                        slot.getChatCreator().getFirstName() + " " + slot.getChatCreator().getLastName());
+            }
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    public static class AddCourtRequest {
+        public String name;
+        public String address;
+        public String operatingHours;
+        public String workingDays;
+        public Integer maxPlayers;
+        public Long cityId;
+        public SportType sportType;
+    }
+
+    @PostMapping("/api/add-court")
+    @ResponseBody
+    public ResponseEntity<?> addCourtApi(@RequestBody AddCourtRequest req, Authentication authentication) {
+        try {
+            User user = userRepository.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            SportCourt court = new SportCourt();
+            court.setName(req.name);
+            court.setAddress(req.address);
+            court.setOperatingHours(req.operatingHours);
+            court.setWorkingDays(req.workingDays);
+            court.setMaxPlayers(req.maxPlayers);
+            if (req.sportType != null) {
+                court.setSportType(courtService.getSportTypeById(req.sportType.getId()));
+            }
+            if (req.cityId != null) {
+                court.setCity(courtService.getCityById(req.cityId));
+            }
+
+            courtService.createCustomCourt(court, user);
+
+            return ResponseEntity.ok().body(Map.of("success", true, "message", "Площадка отправлена на модерацию"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
     // Отменить запись
     @PostMapping("/cancel-booking")
     @ResponseBody

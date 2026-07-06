@@ -1,0 +1,42 @@
+spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/sportbuddy}
+spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
+spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
+
+# update = не удаляет существующие данные, только добавляет новые колонки/таблицы
+spring.jpa.hibernate.ddl-auto=update
+
+# GigaChat gRPC (Сбер)
+gigachat.grpc.host=gigachat.devices.sberbank.ru
+gigachat.grpc.port=443
+gigachat.auth.url=https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+gigachat.authorization.key=${GIGACHAT_AUTHORIZATION_KEY}
+gigachat.client.id=${GIGACHAT_CLIENT_ID}
+gigachat.client.secret=${GIGACHAT_CLIENT_SECRET}
+gigachat.scope=GIGACHAT_API_PERS
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+server.port=8080
+spring.thymeleaf.cache=false
+
+# Mail settings for Gmail - ?????????? ?????, ? ?? IP
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=${SPRING_MAIL_USERNAME}
+spring.mail.password=${SPRING_MAIL_PASSWORD}
+spring.mail.protocol=smtp
+
+# Mail properties ? ?????????? SSL
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+spring.mail.properties.mail.smtp.starttls.required=true
+spring.mail.properties.mail.smtp.connectiontimeout=10000
+spring.mail.properties.mail.smtp.timeout=10000
+spring.mail.properties.mail.smtp.writetimeout=10000
+spring.mail.properties.mail.smtp.ssl.trust=smtp.gmail.com
+spring.mail.properties.mail.debug=true
+
+# ?????: ????????? ???????? SSL ??? ????? (?? ??? ??????????!)
+spring.mail.properties.mail.smtp.ssl.checkserveridentity=false
+# Store/read timestamps in UTC (step 3)
+spring.jpa.properties.hibernate.jdbc.time_zone=UTC

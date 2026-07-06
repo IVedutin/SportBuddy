@@ -1,10 +1,12 @@
 package com.sportbuddy;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class SportbuddyApplicationTests {
+/**
+ * Smoke test: the full application context boots against a real PostgreSQL
+ * (Testcontainers) with the placeholder-based configuration.
+ */
+class SportbuddyApplicationTests extends AbstractIntegrationTest {
 
 	@Test
 	void contextLoads() {

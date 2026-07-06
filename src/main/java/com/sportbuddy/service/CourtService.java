@@ -1,11 +1,10 @@
 package com.sportbuddy.service;
+import lombok.extern.slf4j.Slf4j;
 
 import com.sportbuddy.dto.ParticipantDto;
 import com.sportbuddy.dto.BookingDto;
 import com.sportbuddy.entity.*;
 import com.sportbuddy.repository.*;
-import jakarta.persistence.Column;
-import jakarta.persistence.PrePersist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -18,28 +17,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class CourtService {
 
-    @Autowired
-    private RankedMatchRepository rankedMatchRepository;
-
-    @Autowired
-    private SportTypeRepository sportTypeRepository;
-
-    @Autowired
-    private SportCourtRepository sportCourtRepository;
-
-    @Autowired
-    private CourtTimeSlotRepository courtTimeSlotRepository;
-
-    @Autowired
-    private BookingRepository bookingRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ReviewRepository reviewRepository; // ДОБАВЬ ЭТО
+    @Autowired private RankedMatchRepository rankedMatchRepository;
+    @Autowired private SportTypeRepository sportTypeRepository;
+    @Autowired private SportCourtRepository sportCourtRepository;
+    @Autowired private CourtTimeSlotRepository courtTimeSlotRepository;
+    @Autowired private BookingRepository bookingRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private ReviewRepository reviewRepository;
+    @Autowired private CityRepository cityRepository;
 
 
 
@@ -61,7 +49,7 @@ public class CourtService {
             LocalDate currentDate = today.plusDays(day);
             addTimeSlotsForSingleDay(court, currentDate);
         }
-        System.out.println("Initialized slots for new court: " + court.getName());
+        log.info("Initialized slots for new court: " + court.getName());
     }
 
     @Transactional
@@ -127,6 +115,10 @@ public class CourtService {
         return sportCourtRepository.findByStatus("PENDING_APPROVAL");
     }
 
+    public List<SportCourt> getAllCourts() {
+        return sportCourtRepository.findAll();
+    }
+
     // 2. Одобрить площадку
     @Transactional
     public void approveCourt(Long courtId) {
@@ -150,10 +142,30 @@ public class CourtService {
         sportCourtRepository.delete(court);
     }
 
+    public List<City> getAllCities() {
+        return cityRepository.findAll();
+    }
+
     public List<SportCourt> getCourtsBySportType(Long sportTypeId) {
-        // ВАЖНО: Передаем статус "APPROVED"
-        // Теперь пользователи не увидят PENDING_APPROVAL площадки
         return sportCourtRepository.findBySportTypeIdAndStatus(sportTypeId, "APPROVED");
+    }
+
+    public List<SportCourt> getCourtsByCityAndSportType(Long cityId, Long sportTypeId) {
+        return sportCourtRepository.findByCityIdAndSportTypeIdAndStatus(cityId, sportTypeId, "APPROVED");
+    }
+
+    @Transactional
+    public void deleteCourt(Long courtId) {
+        SportCourt court = sportCourtRepository.findById(courtId)
+                .orElseThrow(() -> new RuntimeException("Площадка не найдена"));
+        List<CourtTimeSlot> slots = courtTimeSlotRepository.findByCourtId(courtId);
+        for (CourtTimeSlot slot : slots) {
+            List<Booking> slotBookings = bookingRepository.findByCourtTimeSlotId(slot.getId());
+            bookingRepository.deleteAll(slotBookings);
+        }
+        courtTimeSlotRepository.deleteAll(slots);
+        reviewRepository.deleteAll(reviewRepository.findByCourtId(courtId));
+        sportCourtRepository.delete(court);
     }
     public void createRankedMatch(String title, String locName, String address, String desc, LocalDateTime start, LocalDateTime end) {
         RankedMatch match = new RankedMatch();
@@ -187,8 +199,17 @@ public class CourtService {
         List<CourtTimeSlot> futureSlots = allSlots.stream()
                 .filter(slot -> slot.getStartTime().isAfter(now))
                 .collect(Collectors.toList());
-        System.out.println("Court " + courtId + " - Total slots: " + allSlots.size() + ", Future slots: " + futureSlots.size());
+        log.info("Court " + courtId + " - Total slots: " + allSlots.size() + ", Future slots: " + futureSlots.size());
         return futureSlots;
+    }
+    public SportType getSportTypeById(Long id) {
+        return sportTypeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sport type not found"));
+    }
+
+    public City getCityById(Long id) {
+        return cityRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("City not found"));
     }
 
     public Integer getBookingCountForTimeSlot(Long timeSlotId) {
@@ -266,7 +287,7 @@ public class CourtService {
 
             // 2. ПРОВЕРКА: Записан ли уже пользователь на ЭТОТ ЖЕ слот?
             if (bookingRepository.existsByUserIdAndCourtTimeSlotId(user.getId(), timeSlotId)) {
-                System.out.println("Пользователь уже записан в этот слот");
+                log.info("Пользователь уже записан в этот слот");
                 return false;
             }
 
@@ -278,7 +299,7 @@ public class CourtService {
             );
 
             if (hasConflict) {
-                System.out.println("Ошибка: У пользователя уже есть игра в это время на другой площадке!");
+                log.info("Ошибка: У пользователя уже есть игра в это время на другой площадке!");
                 return false;
             }
 
@@ -290,7 +311,7 @@ public class CourtService {
             return true;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Ошибка бронирования слота {}", timeSlotId, e);
             return false;
         }
     }
@@ -312,20 +333,20 @@ public class CourtService {
     @Scheduled(cron = "0 0 0 * * ?")
     @Transactional
     public void updateTimeSlotsDaily() {
-        System.out.println("=== DAILY TIME SLOTS UPDATE ===");
+        log.info("=== DAILY TIME SLOTS UPDATE ===");
         LocalDate today = LocalDate.now();
         LocalDateTime cutoffTime = LocalDateTime.now().minusDays(1);
         List<CourtTimeSlot> oldSlots = courtTimeSlotRepository.findAll().stream()
                 .filter(slot -> slot.getStartTime().isBefore(cutoffTime))
                 .collect(Collectors.toList());
         courtTimeSlotRepository.deleteAll(oldSlots);
-        System.out.println("Deleted " + oldSlots.size() + " old slots");
+        log.info("Deleted " + oldSlots.size() + " old slots");
         List<SportCourt> allCourts = sportCourtRepository.findAll();
         LocalDate newDay = today.plusDays(2);
         for (SportCourt court : allCourts) {
             addTimeSlotsForSingleDay(court, newDay);
         }
-        System.out.println("Daily update completed");
+        log.info("Daily update completed");
     }
 
     private void addTimeSlotsForSingleDay(SportCourt court, LocalDate date) {
@@ -338,7 +359,7 @@ public class CourtService {
                 CourtTimeSlot slot = new CourtTimeSlot(court, startTime, endTime, 0);
                 courtTimeSlotRepository.save(slot);
             }
-            System.out.println("Added slots for " + court.getName() + " on " + date);
+            log.info("Added slots for " + court.getName() + " on " + date);
         }
     }
 }

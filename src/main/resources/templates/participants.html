@@ -1,124 +1,204 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
-  <head>
+<head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Детали события в SportBuddy — информация о записи на игру, участниках, времени проведения и доступ к чату для координации игроков."
-    />
     <title>Участники — SportBuddy</title>
-    <link rel="icon" href="icons/icon.ico" sizes="any" />
-    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="icon.png" />
     <link rel="stylesheet" href="/fonts/fonts.css" />
     <link rel="stylesheet" href="/style/global.css" />
     <link rel="stylesheet" href="/style/styles_participants.css" />
-  </head>
-  <body>
-    <main class="pt">
-      <section class="pt_hero">
+</head>
+<body>
+<main class="pt">
+    <section class="pt_hero">
         <div class="pt_header">
-          <div class="pt_brand">
-            <img class="pt_logo" src="/icons/logo.svg" alt="SportBuddy" />
-          </div>
+            <div class="pt_brand">
+                <img
+                        class="pt_logo"
+                        src="/icons/logo.svg"
+                        alt="SportBuddy"
+                />
+            </div>
         </div>
         <div class="pt_hero-grid">
-          <div class="pt_hero-text">
-            <div class="pt_hero-middle">
-              <div
-                class="pt_title"
-                th:text="${sportType} + ' — ' + ${courtName}"
-              >
-                Футбол — ФОК Звёздный
-              </div>
-              <div class="pt_subtitle" th:text="'Игра в ' + ${timeSlot}">
-                Игра в 18:00 – 19:00
-              </div>
+            <div class="pt_hero-text">
+                <div class="pt_hero-middle">
+                    <div
+                            class="pt_title"
+                            th:text="${sportType} + ' — ' + ${courtName}"
+                    >
+                        Футбол — ФОК Звёздный
+                    </div>
+                    <div class="pt_subtitle" th:text="'Игра в ' + ${timeSlot}">
+                        Игра в 18:00 – 19:00
+                    </div>
+                </div>
+                <div class="pt_actions">
+                    <a class="pt_btn pt_btn-ghost" th:href="@{/court/my-bookings}">
+                        ← Назад к моим записям
+                    </a>
+                </div>
             </div>
-            <div class="pt_actions">
-              <a class="pt_btn pt_btn-ghost" th:href="@{/court/my-bookings}">
-                ← Назад к моим записям
-              </a>
-            </div>
-          </div>
-          <aside class="pt_chat-card">
-            <div class="pt_chat-title">Чат события</div>
-            <div class="pt_chat-subtitle">
-              Создай или открой чат в Max для всех участников
-            </div>
-            <div id="chat-section" class="pt_chat-body"></div>
-          </aside>
+            <aside class="pt_chat-card">
+                <div class="pt_chat-title">Чат события</div>
+                <div class="pt_chat-subtitle">
+                    Создай или открой чат в Max для всех участников
+                </div>
+                <div id="chat-section" class="pt_chat-body"></div>
+            </aside>
         </div>
-      </section>
-      <section class="pt_list">
+    </section>
+    <section class="pt_list">
         <div class="pt_list-head">
-          <div class="pt_list-title">Список участников</div>
-          <div
-            class="pt_list-meta"
-            th:text="'Всего: ' + ${participants.size()}"
-          >
-            Всего: 0
-          </div>
+            <div class="pt_list-title">Список участников</div>
+            <div
+                    class="pt_list-meta"
+                    th:text="'Всего: ' + ${participants.size()}"
+            >
+                Всего: 0
+            </div>
         </div>
         <div
-          class="pt_empty"
-          th:if="${participants == null || participants.isEmpty()}"
+                class="pt_empty"
+                th:if="${participants == null || participants.isEmpty()}"
         >
-          <div class="pt_empty-title">Пока никто не записался</div>
-          <div class="pt_empty-text">
-            Зайди позже — участники появятся здесь
-          </div>
+            <div class="pt_empty-title">Пока никто не записался</div>
+            <div class="pt_empty-text">
+                Зайди позже — участники появятся здесь
+            </div>
         </div>
         <div
-          class="pt_grid"
-          th:if="${participants != null && !participants.isEmpty()}"
+                class="pt_grid"
+                th:if="${participants != null && !participants.isEmpty()}"
         >
-          <article class="p_card" th:each="participant : ${participants}">
-            <div class="p_name" th:text="${participant.getFullName()}">
-              Иван Иванов
-            </div>
-            <div
-              class="p_tg"
-              th:if="${participant.telegramUsername != null and !participant.telegramUsername.isEmpty()}"
-            >
-              <span class="p_tg-label">Telegram:</span>
-              <span
-                class="p_tg-value"
-                th:text="'@' + ${participant.telegramUsername}"
-                >@username</span
-              >
-            </div>
-            <div
-              class="p_tg p_tg-empty"
-              th:if="${participant.telegramUsername == null or participant.telegramUsername.isEmpty()}"
-            >
-              <span class="p_tg-muted">Telegram не указан</span>
-            </div>
-          </article>
+            <article class="p_card" th:each="participant : ${participants}">
+                <div class="p_name" th:text="${participant.getFullName()}">
+                    Иван Иванов
+                </div>
+                <div
+                        class="p_tg"
+                        th:if="${participant.telegramUsername != null and !participant.telegramUsername.isEmpty()}"
+                >
+                    <span class="p_tg-label">Telegram:</span>
+                    <span
+                            class="p_tg-value"
+                            th:text="'@' + ${participant.telegramUsername}"
+                    >@username</span
+                    >
+                </div>
+                <div
+                        class="p_tg p_tg-empty"
+                        th:if="${participant.telegramUsername == null or participant.telegramUsername.isEmpty()}"
+                >
+                    <span class="p_tg-muted">Telegram не указан</span>
+                </div>
+            </article>
         </div>
-      </section>
-    </main>
-    <script th:inline="javascript">
-      /*[
-        const timeSlotId = [[${timeSlotId}]];
-            const chatUrl = [[${chatUrl}]];
-            const chatCreationLockTime = [[${chatCreationLockTime}]];
-            const chatCreatorFullName = [[${chatCreatorFullName}]];
-            const currentUserId = [[${currentUserId}]];
-            const chatCreatorId = [[${chatCreatorId}]];
+    </section>
+</main>
 
-            window.chatData = {
-            timeSlotId,
-            chatUrl,
-            chatCreationLockTime,
-            chatCreatorFullName,
-            currentUserId,
-            chatCreatorId
-            };
-        ]*/
-    </script>
-    <script src="/js/participants.js"></script>
-  </body>
+<script th:inline="javascript">
+    /*[+
+    const timeSlotId = [[${timeSlotId}]];
+    const chatUrl = [[${chatUrl}]];
+    const chatCreationLockTime = [[${chatCreationLockTime}]];
+    const chatCreatorFullName = [[${chatCreatorFullName}]];
+    const currentUserId = [[${currentUserId}]];
+    const chatCreatorId = [[${chatCreatorId}]];
+    +]*/
+
+    const chatSection = document.getElementById('chat-section');
+
+    function renderChatSection() {
+        // 1. Если ссылка уже есть, показываем ее
+        if (chatUrl) {
+            chatSection.innerHTML = `
+                <a href="${chatUrl}" target="_blank" class="pt_btn" style="background: #0077FF; color: white; text-align: center; width: 100%;">Перейти в чат Max</a>
+            `;
+            return;
+        }
+
+        // 2. Если создание заблокировано
+        if (chatCreationLockTime && new Date(chatCreationLockTime) > new Date()) {
+            // 2.1. Если ТЫ заблокировал, показываем форму для ввода ссылки
+            if (currentUserId === chatCreatorId) {
+                chatSection.innerHTML = `
+                    <p class="pt_chat-message">Вы создаете чат. Вставьте ссылку-приглашение ниже:</p>
+                    <div class="pt_chat-form" style="width: 100%;">
+                        <input type="text" id="chat-url-input" class="pt_input" style="width: 100%; padding: 0.75rem; margin-bottom: 0.5rem;" placeholder="https://max.ru/join/...">
+                        <button id="save-chat-url-btn" class="pt_btn" style="width: 100%;">Сохранить ссылку</button>
+                    </div>
+                `;
+                document.getElementById('save-chat-url-btn').addEventListener('click', saveChatUrl);
+            }
+            // 2.2. Если заблокировал кто-то другой, показываем сообщение
+            else {
+                chatSection.innerHTML = `
+                    <p class="pt_chat-message">${chatCreatorFullName} создает чат... Пожалуйста, подождите.</p>
+                    <button class="pt_btn" disabled style="background: #b0b0b0; width: 100%; cursor: not-allowed;">Создать чат</button>
+                `;
+            }
+            return;
+        }
+
+        // 3. Если ничего из вышеперечисленного - показываем кнопку "Создать чат"
+        chatSection.innerHTML = `
+            <button id="lock-chat-btn" class="pt_btn" style="width: 100%;">Создать чат события в Max</button>
+        `;
+        document.getElementById('lock-chat-btn').addEventListener('click', lockChatCreation);
+    }
+
+    // Функция для блокировки - ТОЧНО КАК В СТАРОМ ФРОНТЕ
+    async function lockChatCreation() {
+        const formData = new FormData();
+        formData.append('timeSlotId', timeSlotId);
+
+        try {
+            const response = await fetch('/court/lock-chat-creation', {
+                method: 'POST',
+                body: formData
+            });
+            const message = await response.text();
+            alert(message);
+            if(response.ok) {
+                window.location.reload();
+            }
+        } catch (error) {
+            alert('Произошла сетевая ошибка.');
+        }
+    }
+
+    // Функция для сохранения ссылки - ТОЧНО КАК В СТАРОМ ФРОНТЕ
+    async function saveChatUrl() {
+        const chatUrlInput = document.getElementById('chat-url-input');
+        const url = chatUrlInput.value;
+
+        if (!url || !url.startsWith('https://max.ru/join/')) {
+            alert('Пожалуйста, введите корректную ссылку-приглашение (должна начинаться с https://max.ru/join/).');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('timeSlotId', timeSlotId);
+        formData.append('chatUrl', url);
+
+        try {
+            const response = await fetch('/court/save-chat-url', {
+                method: 'POST',
+                body: formData
+            });
+            const message = await response.text();
+            alert(message);
+            if(response.ok) {
+                window.location.reload();
+            }
+        } catch (error) {
+            alert('Произошла сетевая ошибка.');
+        }
+    }
+
+    // Первоначальная отрисовка
+    renderChatSection();
+</script>
+</body>
 </html>

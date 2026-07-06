@@ -1,13 +1,8 @@
 package com.sportbuddy.service;
+import lombok.extern.slf4j.Slf4j;
 
-import com.sportbuddy.entity.Booking;
-import com.sportbuddy.entity.SportType;
-import com.sportbuddy.entity.SportCourt;
-import com.sportbuddy.entity.CourtTimeSlot;
-import com.sportbuddy.repository.BookingRepository;
-import com.sportbuddy.repository.SportTypeRepository;
-import com.sportbuddy.repository.SportCourtRepository;
-import com.sportbuddy.repository.CourtTimeSlotRepository;
+import com.sportbuddy.entity.*;
+import com.sportbuddy.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
@@ -21,143 +16,128 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class DataInitializer implements CommandLineRunner {
 
-    @Autowired
-    private SportTypeRepository sportTypeRepository;
-
-    @Autowired
-    private SportCourtRepository sportCourtRepository;
-
-    @Autowired
-    private CourtTimeSlotRepository courtTimeSlotRepository;
-
-    @Autowired
-    private BookingRepository bookingRepository; // Добавьте это
+    @Autowired private SportTypeRepository sportTypeRepository;
+    @Autowired private SportCourtRepository sportCourtRepository;
+    @Autowired private CourtTimeSlotRepository courtTimeSlotRepository;
+    @Autowired private BookingRepository bookingRepository;
+    @Autowired private CityRepository cityRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        // Добавляем виды спорта если их нет
+        // 1. Инициализируем города (идемпотентно)
+        initCities();
+
+        // 2. Инициализируем виды спорта и площадки только если их нет
         if (sportTypeRepository.count() == 0) {
-            SportType football = new SportType("Футбол", "Футбольные игры");
-            SportType basketball = new SportType("Баскетбол", "Баскетбольные игры");
-            SportType tennis = new SportType("Теннис", "Теннисные корты");
-
-            sportTypeRepository.saveAll(Arrays.asList(football, basketball, tennis));
-
-            // Добавляем площадки для футбола
-            SportCourt footballCourt1 = new SportCourt("ФОК Звездный", "ул. Большая Затонская, 3", football, 30);
-            SportCourt footballCourt2 = new SportCourt("ФОК Юбилейный", "ул, Братьев Никитиных, 10", football, 30);
-            SportCourt footballCourt3 = new SportCourt("Площадка у СГЮА","ул, Чернышевского 104",football,30);
-
-            // Добавляем площадки для баскетбола
-            SportCourt basketballCourt1 = new SportCourt("ФОК Звездный", "ул. Большая Затонская, 3", basketball, 20);
-            SportCourt basketballCourt2 = new SportCourt("ФОК Юбилейный", "ул, Братьев Никитиных, 10", basketball, 20);
-            SportCourt basketballCourt3 = new SportCourt("Площадка у СГЮА","ул, Чернышевского 104",basketball,20);
-
-            // Добавляем площадки для тенниса
-            SportCourt tennisCourt1 = new SportCourt("Ракета", "ул. Астрахансккая, 103", tennis, 4);
-            SportCourt tennisCourt2 = new SportCourt("Первая школа тенниса", "ул. Чернышевского, 94", tennis, 2);
-
-            sportCourtRepository.saveAll(Arrays.asList(
-                    footballCourt1, footballCourt2, footballCourt3,
-                    basketballCourt1, basketballCourt2, basketballCourt3,
-                    tennisCourt1, tennisCourt2
-            ));
+            initSportTypesAndCourts();
         }
 
-        // ВСЕГДА обновляем слоты при запуске
+        // 3. Всегда: привязываем площадки без города к Саратову
+        assignCityToCourtsMissingCity();
+
+        // 4. Всегда: создаём слоты на недостающие дни (не трогаем старые данные/пользователей)
         updateTimeSlotsForAllCourts();
+    }
+
+    private void initCities() {
+        String[] cityNames = {"Саратов", "Москва", "Санкт-Петербург", "Казань"};
+        for (String name : cityNames) {
+            if (cityRepository.findByName(name).isEmpty()) {
+                City city = new City();
+                city.setName(name);
+                city.setRegion(name.equals("Саратов") ? "Саратовская область" : name.equals("Москва") ? "Москва" : name.equals("Санкт-Петербург") ? "Ленинградская область" : "Республика Татарстан");
+                cityRepository.save(city);
+            }
+        }
+        log.info("Cities initialized: " + cityRepository.count());
+    }
+
+    private void initSportTypesAndCourts() {
+        City saratov = cityRepository.findByName("Саратов").orElseThrow();
+
+        SportType football = new SportType("Футбол", "Футбольные игры");
+        SportType basketball = new SportType("Баскетбол", "Баскетбольные игры");
+        SportType tennis = new SportType("Теннис", "Теннисные корты");
+        sportTypeRepository.saveAll(Arrays.asList(football, basketball, tennis));
+
+        SportCourt fc1 = new SportCourt("ФОК Звездный", "ул. Большая Затонская, 3", football, 30);
+        SportCourt fc2 = new SportCourt("ФОК Юбилейный", "ул. Братьев Никитиных, 10", football, 30);
+        SportCourt fc3 = new SportCourt("Площадка у СГЮА", "ул. Чернышевского 104", football, 30);
+        SportCourt bc1 = new SportCourt("ФОК Звездный", "ул. Большая Затонская, 3", basketball, 20);
+        SportCourt bc2 = new SportCourt("ФОК Юбилейный", "ул. Братьев Никитиных, 10", basketball, 20);
+        SportCourt bc3 = new SportCourt("Площадка у СГЮА", "ул. Чернышевского 104", basketball, 20);
+        SportCourt tc1 = new SportCourt("Ракета", "ул. Астраханская, 103", tennis, 4);
+        SportCourt tc2 = new SportCourt("Первая школа тенниса", "ул. Чернышевского, 94", tennis, 2);
+
+        List<SportCourt> courts = Arrays.asList(fc1, fc2, fc3, bc1, bc2, bc3, tc1, tc2);
+        courts.forEach(c -> {
+            c.setCity(saratov);
+            c.setStatus("APPROVED");
+            c.setOperatingHours("06:00–22:00");
+            c.setWorkingDays("Ежедневно");
+        });
+
+        sportCourtRepository.saveAll(courts);
+        log.info("Courts initialized: " + courts.size());
+    }
+
+    private void assignCityToCourtsMissingCity() {
+        cityRepository.findByName("Саратов").ifPresent(saratov -> {
+            List<SportCourt> noCityCourts = sportCourtRepository.findAll().stream()
+                    .filter(c -> c.getCity() == null)
+                    .collect(Collectors.toList());
+            noCityCourts.forEach(c -> c.setCity(saratov));
+            if (!noCityCourts.isEmpty()) {
+                sportCourtRepository.saveAll(noCityCourts);
+                log.info("Assigned Saratov city to " + noCityCourts.size() + " courts");
+            }
+        });
     }
 
     private void updateTimeSlotsForAllCourts() {
         List<SportCourt> allCourts = sportCourtRepository.findAll();
         LocalDate today = LocalDate.now();
-        LocalDateTime cutoffTime = LocalDateTime.now().minusDays(1);
+        LocalDateTime cutoffTime = today.atStartOfDay(); // Удаляем только слоты прошлых дней
 
-        System.out.println("=== UPDATING TIME SLOTS ===");
-        System.out.println("Today: " + today);
-        System.out.println("Courts count: " + allCourts.size());
+        log.info("=== UPDATING TIME SLOTS === Today: " + today + ", Courts: " + allCourts.size());
 
-        // Удаляем бронирования для прошедших слотов
+        // Удаляем бронирования прошедших слотов
         List<Booking> oldBookings = bookingRepository.findAll().stream()
-                .filter(booking -> booking.getCourtTimeSlot().getStartTime().isBefore(cutoffTime))
+                .filter(b -> b.getCourtTimeSlot().getEndTime().isBefore(cutoffTime))
                 .collect(Collectors.toList());
-
         bookingRepository.deleteAll(oldBookings);
-        System.out.println("Deleted " + oldBookings.size() + " old bookings");
 
         // Удаляем прошедшие слоты
         List<CourtTimeSlot> oldSlots = courtTimeSlotRepository.findAll().stream()
-                .filter(slot -> slot.getStartTime().isBefore(cutoffTime))
+                .filter(s -> s.getEndTime().isBefore(cutoffTime))
                 .collect(Collectors.toList());
-
         courtTimeSlotRepository.deleteAll(oldSlots);
-        System.out.println("Deleted " + oldSlots.size() + " old time slots");
 
-        // Создаем новые слоты на недостающие дни
+        log.info("Cleaned up: " + oldBookings.size() + " bookings, " + oldSlots.size() + " slots");
+
+        // Создаём слоты на сегодня, завтра, послезавтра (только если их нет)
         for (SportCourt court : allCourts) {
-            updateTimeSlotsForCourt(court, today);
-        }
-
-        System.out.println("Time slots updated successfully");
-    }
-    private void updateTimeSlotsForCourt(SportCourt court, LocalDate startDate) {
-        System.out.println("Updating slots for court: " + court.getName());
-
-        // Получаем существующие слоты для этой площадки
-        List<CourtTimeSlot> existingSlots = courtTimeSlotRepository.findByCourtId(court.getId());
-
-        // Определяем какие дни нужно добавить
-        Set<LocalDate> existingDates = existingSlots.stream()
-                .map(slot -> slot.getStartTime().toLocalDate())
-                .collect(Collectors.toSet());
-
-        for (int day = 0; day < 3; day++) {
-            LocalDate currentDate = startDate.plusDays(day);
-
-            // Если слотов на эту дату нет - создаем
-            if (!existingDates.contains(currentDate)) {
-                System.out.println("Adding slots for " + court.getName() + " on " + currentDate);
-                addTimeSlotsForSingleDay(court, currentDate);
+            for (int day = 0; day < 3; day++) {
+                LocalDate date = today.plusDays(day);
+                boolean hasSlots = courtTimeSlotRepository.findByCourtId(court.getId()).stream()
+                        .anyMatch(s -> s.getStartTime().toLocalDate().equals(date));
+                if (!hasSlots) {
+                    addTimeSlotsForSingleDay(court, date);
+                }
             }
         }
+
+        log.info("Time slots updated successfully");
     }
 
     private void addTimeSlotsForSingleDay(SportCourt court, LocalDate date) {
         for (int hour = 6; hour < 22; hour++) {
-            LocalDateTime startTime = LocalDateTime.of(date, LocalTime.of(hour, 0));
-            LocalDateTime endTime = startTime.plusHours(1);
-
-            CourtTimeSlot slot = new CourtTimeSlot(
-                    court,
-                    startTime,
-                    endTime,
-                    0
-            );
-            courtTimeSlotRepository.save(slot);
+            LocalDateTime start = LocalDateTime.of(date, LocalTime.of(hour, 0));
+            courtTimeSlotRepository.save(new CourtTimeSlot(court, start, start.plusHours(1), 0));
         }
-    }
-
-    private void addTimeSlotsForCourt(SportCourt court, LocalDate startDate) {
-        System.out.println("Creating slots for court: " + court.getName());
-
-        for (int day = 0; day < 3; day++) { // на сегодня, завтра, послезавтра
-            LocalDate currentDate = startDate.plusDays(day);
-
-            for (int hour = 6; hour < 22; hour++) { // с 6:00 до 21:00
-                LocalDateTime startTime = LocalDateTime.of(currentDate, LocalTime.of(hour, 0));
-                LocalDateTime endTime = startTime.plusHours(1);
-
-                CourtTimeSlot slot = new CourtTimeSlot(
-                        court,
-                        startTime,
-                        endTime,
-                        0 // БЕСПЛАТНО!
-                );
-                courtTimeSlotRepository.save(slot);
-            }
-        }
-        System.out.println("Created slots for court: " + court.getName() + " from " + startDate + " to " + startDate.plusDays(2));
+        log.info("Added slots for " + court.getName() + " on " + date);
     }
 }

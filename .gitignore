@@ -28,6 +28,13 @@ logs/
 *.sql
 /h2-data/
 .env
+.env.local
+.env.*.local
 application-dev.properties
+application-local.properties
 *.tmp
 *.temp
+
+# Keep templates (never ignore these)
+!.env.example
+!application.properties.example
